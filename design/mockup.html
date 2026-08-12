@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elyra — mockup</title>
+<style>
+
+  /* ============================================================
+     TOKENS
+     Direzione: "quadro strumenti" — una plancia di comando serale,
+     non una SaaS bianca. Legno scuro, ottone, cifre allineate come
+     su un contatore. Ogni scheda è una targhetta con un nome.
+     ============================================================ */
+  :root{
+    /* ink — sfondo, non nero puro: un blu-carbone caldo */
+    --ink-950:#12151b;
+    --ink-900:#1a1f27;
+    --ink-850:#20262f;
+    --ink-800:#262d38;
+    --line:#333c49;
+    --line-soft:#2a323d;
+
+    /* paper — testo, tono carta/avorio, mai bianco puro */
+    --paper:#eae6da;
+    --paper-dim:#a7aebb;
+    --paper-faint:#6e7686;
+
+    /* ottone — accento di marca, unico e con moderazione */
+    --brass:#c9a15a;
+    --brass-bright:#e0bd7c;
+    --brass-dim:#8a7141;
+
+    /* semantica — non l'ottone, tre voci a parte */
+    --good:#7fae6f;
+    --good-dim:#4d6b46;
+    --bad:#c4636b;
+    --bad-dim:#7a3f44;
+    --warn:#d99a4e;
+    --warn-dim:#8a6535;
+
+    --font-display:'Fraunces','Iowan Old Style','Palatino Linotype',Georgia,serif;
+    --font-body:'Manrope','Inter',-apple-system,'Segoe UI',sans-serif;
+    --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace;
+
+    --radius:10px;
+    --radius-sm:6px;
+    --gap:18px;
+    --shadow-panel:0 1px 0 rgba(0,0,0,.4), 0 12px 28px -16px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(201,161,90,.07), transparent 60%),
+      var(--ink-950);
+    color:var(--paper);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  ::selection{background:var(--brass-dim);color:var(--paper);}
+
+  a{color:inherit;}
+
+  /* fixed-width numerals everywhere data appears — regola 6 */
+  .num, .num * {
+    font-family:var(--font-mono);
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-.2px;
+  }
+
+  h1,h2,h3{font-family:var(--font-display);font-weight:600;margin:0;}
+
+  button{font-family:inherit;cursor:pointer;}
+
+  :focus-visible{
+    outline:2px solid var(--brass-bright);
+    outline-offset:2px;
+    border-radius:4px;
+  }
+
+  /* ============================================================
+     BARRA IN ALTO — un contenitore solo
+     ============================================================ */
+  .topbar-container{
+    position:sticky; top:0; z-index:40;
+    background:linear-gradient(var(--ink-950) 82%, transparent);
+    padding:14px 22px 6px;
+  }
+  .topbar{
+    max-width:1240px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    gap:22px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:8px;
+    font-family:var(--font-display);
+    font-size:19px; font-weight:700;
+    letter-spacing:.3px;
+    white-space:nowrap;
+  }
+  .brand .mark{color:var(--brass);}
+  .brand .sub{
+    font-family:var(--font-body);
+    font-size:10.5px; font-weight:600;
+    letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--paper-faint);
+  }
+  .tabs{ display:flex; gap:2px; }
+  .tab{
+    background:none; border:none; color:var(--paper-dim);
+    font-size:13px; font-weight:600; letter-spacing:.3px;
+    padding:8px 14px; border-radius:7px;
+  }
+  .tab:hover{ color:var(--paper); background:var(--ink-800); }
+  .tab.active{ color:var(--ink-950); background:var(--brass); }
+
+  /* la striscia strumenti — il pezzo firma */
+  .ledger{
+    margin-left:auto;
+    display:flex; align-items:center; gap:0;
+    border:1px solid var(--line);
+    border-radius:9px;
+    overflow:hidden;
+    background:var(--ink-900);
+  }
+  .gauge{
+    display:flex; flex-direction:column; gap:2px;
+    padding:6px 14px;
+    border-right:1px solid var(--line);
+    min-width:84px;
+  }
+  .gauge:last-child{ border-right:none; }
+  .gauge .g-label{
+    font-size:9.5px; font-weight:700; letter-spacing:1.2px;
+    text-transform:uppercase; color:var(--paper-faint);
+  }
+  .gauge .g-value{
+    font-size:14px; font-weight:600; color:var(--paper);
+    display:flex; align-items:baseline; gap:5px;
+  }
+  .gauge .g-value.up{ color:var(--good); }
+  .gauge .g-value.down{ color:var(--bad); }
+  .gauge .g-value small{ font-size:10px; color:var(--paper-faint); font-family:var(--font-body); }
+
+  @media (max-width: 980px){
+    .ledger{ display:none; }
+  }
+
+  /* ============================================================
+     GRIGLIA — un contenitore solo
+     ============================================================ */
+  .screen{
+    max-width:1240px;
+    margin:0 auto;
+    padding:22px 22px 140px;
+  }
+  .screen[hidden]{ display:none; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:var(--gap);
+  }
+  .grid.g2{ grid-template-columns:repeat(2, 1fr); }
+  .grid.g1{ grid-template-columns:1fr; }
+  .span-2{ grid-column:span 2; }
+  .span-3{ grid-column:span 3; }
+
+  @media (max-width: 900px){
+    .grid, .grid.g2{ grid-template-columns:1fr; }
+    .span-2, .span-3{ grid-column:span 1; }
+  }
+
+  /* ============================================================
+     SCHEDA — la targhetta d'ottone in alto identifica ogni scheda
+     ============================================================ */
+  .card{
+    background:var(--ink-900);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-panel);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .card-plate{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    padding:12px 16px;
+    border-bottom:1px solid var(--line-soft);
+    background:
+      linear-gradient(180deg, rgba(201,161,90,.05), transparent);
+  }
+  .card-plate .plate-name{
+    font-size:10.5px; font-weight:700; letter-spacing:1.6px;
+    text-transform:uppercase; color:var(--brass);
+    display:flex; align-items:center; gap:7px;
+  }
+  .card-plate .plate-name svg{ width:13px; height:13px; opacity:.9; flex:none; }
+  .card-plate .plate-meta{ font-size:11px; color:var(--paper-faint); }
+  .card-body{ padding:16px; flex:1; display:flex; flex-direction:column; gap:12px; }
+
+  .rule{ height:1px; background:var(--line-soft); border:none; margin:2px 0; }
+
+  /* Operator */
+  .op-name{ font-family:var(--font-display); font-size:22px; font-weight:600; }
+  .op-role{ color:var(--paper-dim); font-size:13px; }
+  .op-city{ color:var(--paper-faint); font-size:12px; }
+  .streak{
+    margin-top:4px;
+    display:inline-flex; align-items:center; gap:7px;
+    padding:5px 10px;
+    border:1px solid var(--brass-dim);
+    border-radius:20px;
+    font-size:12px; color:var(--brass-bright);
+    width:fit-content;
+  }
+  .streak b{ font-family:var(--font-mono); }
+
+  /* Session */
+  .greet{ color:var(--paper-dim); font-size:13px; }
+  .clock-row{ display:flex; align-items:baseline; gap:12px; }
+  .clock{ font-family:var(--font-mono); font-size:34px; font-weight:600; letter-spacing:-1px; }
+  .date-full{ color:var(--paper-dim); font-size:12.5px; text-transform:capitalize; }
+  .today-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .today-item{
+    display:flex; align-items:center; gap:10px;
+    padding:9px 10px;
+    background:var(--ink-850);
+    border:1px solid var(--line-soft);
+    border-radius:7px;
+    font-size:13px;
+  }
+  .today-item:hover{ border-color:var(--brass-dim); }
+  .today-item .idx{ font-family:var(--font-mono); color:var(--brass); font-size:12px; width:14px; }
+  .today-item .who{ margin-left:auto; color:var(--paper-faint); font-size:11.5px; }
+  .band{
+    font-size:9.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
+    padding:2px 6px; border-radius:4px;
+  }
+  .band.late{ background:var(--bad-dim); color:#ffd9dc; }
+  .band.today{ background:var(--warn-dim); color:#ffe6c2; }
+
+  /* Calendario */
+  .week-strip{ display:flex; gap:6px; }
+  .week-day{
+    flex:1; text-align:center; padding:8px 2px;
+    border:1px solid var(--line-soft); border-radius:7px;
+    font-size:11px; color:var(--paper-dim);
+    cursor:pointer;
+  }
+  .week-day .d-num{ font-family:var(--font-mono); font-size:15px; color:var(--paper); display:block; margin-top:2px; }
+  .week-day.is-today{ border-color:var(--brass); background:rgba(201,161,90,.08); }
+  .week-day.is-today .d-num{ color:var(--brass-bright); }
+  .agenda{ display:flex; flex-direction:column; gap:7px; }
+  .agenda-item{ display:flex; gap:10px; font-size:12.5px; }
+  .agenda-item time{ font-family:var(--font-mono); color:var(--paper-faint); width:42px; flex:none; }
+  .now-line{ height:2px; background:var(--brass); border-radius:2px; position:relative; }
+  .now-line::before{
+    content:'ora'; position:absolute; right:0; top:-16px;
+    font-size:9px; color:var(--brass); letter-spacing:1px; text-transform:uppercase;
+  }
+
+  /* Abitudini */
+  .ring-row{ display:flex; align-items:center; gap:14px; }
+  .ring{ flex:none; }
+  .ring-label{ font-size:12px; color:var(--paper-dim); }
+  .ring-label b{ font-family:var(--font-mono); color:var(--paper); font-size:16px; }
+  .habit-list{ display:flex; flex-direction:column; gap:6px; }
+  .habit{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 10px; border-radius:7px;
+    background:var(--ink-850); border:1px solid var(--line-soft);
+    font-size:12.5px;
+  }
+  .habit .chk{
+    width:18px; height:18px; border-radius:5px; border:1.5px solid var(--brass-dim);
+    display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .habit.done .chk{ background:var(--brass); border-color:var(--brass); color:var(--ink-950); }
+  .habit .cnt{ margin-left:auto; font-family:var(--font-mono); color:var(--paper-dim); font-size:12px; }
+
+  /* Blocchi */
+  .block-item{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 10px; border-radius:7px;
+    background:var(--ink-850); border:1px solid var(--bad-dim);
+    font-size:12.5px;
+  }
+  .block-item .days{ margin-left:auto; font-family:var(--font-mono); color:var(--bad); font-size:12px; }
+
+  /* Polso finanziario */
+  .pulse-total{ display:flex; align-items:baseline; gap:10px; }
+  .pulse-total .amount{ font-family:var(--font-mono); font-size:26px; font-weight:600; }
+  .pulse-total .delta{ font-size:12.5px; }
+  .pulse-total .delta.up{ color:var(--good); }
+  .pulse-total .delta.down{ color:var(--bad); }
+  .pulse-bars{ display:flex; flex-direction:column; gap:8px; }
+  .pbar-row{ display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--paper-dim); }
+  .pbar-row .pbar-label{ width:70px; flex:none; }
+  .pbar-track{ flex:1; height:6px; background:var(--ink-800); border-radius:4px; overflow:hidden; }
+  .pbar-fill{ height:100%; border-radius:4px; background:var(--brass); }
+  .pbar-fill.debt{ background:var(--bad-dim); }
+  .pbar-row .pbar-val{ font-family:var(--font-mono); width:64px; text-align:right; flex:none; }
+  .updated-row{ display:flex; align-items:center; gap:8px; font-size:11px; color:var(--paper-faint); margin-top:auto; }
+  .btn-refresh{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--ink-800); border:1px solid var(--line); color:var(--paper-dim);
+    padding:5px 10px; border-radius:6px; font-size:11.5px;
+  }
+  .btn-refresh:hover{ border-color:var(--brass-dim); color:var(--paper); }
+
+  /* Nutrizione */
+  .macro-row{ display:flex; gap:10px; }
+  .macro{
+    flex:1; text-align:center; padding:8px 4px; border-radius:7px;
+    background:var(--ink-850); border:1px solid var(--line-soft);
+  }
+  .macro .m-label{ font-size:10px; color:var(--paper-faint); text-transform:uppercase; letter-spacing:.6px; }
+  .macro .m-val{ font-family:var(--font-mono); font-size:15px; margin-top:2px; }
+  .meal-list{ display:flex; flex-direction:column; gap:6px; }
+  .meal{ display:flex; align-items:center; gap:8px; font-size:12px; }
+  .meal time{ font-family:var(--font-mono); color:var(--paper-faint); width:38px; flex:none; }
+  .meal .kcal{ margin-left:auto; font-family:var(--font-mono); color:var(--paper-dim); }
+  .pill-est{ font-size:9px; color:var(--warn); border:1px solid var(--warn-dim); border-radius:8px; padding:1px 5px; }
+
+  /* Salute */
+  .health-table{ width:100%; border-collapse:collapse; font-size:12px; }
+  .health-table th{ text-align:right; color:var(--paper-faint); font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:.5px; padding-bottom:6px; }
+  .health-table th:first-child, .health-table td:first-child{ text-align:left; }
+  .health-table td{ text-align:right; padding:5px 0; border-top:1px solid var(--line-soft); font-family:var(--font-mono); }
+  .avg-row{ display:flex; gap:16px; font-size:11.5px; color:var(--paper-dim); margin-bottom:4px; }
+  .avg-row b{ font-family:var(--font-mono); color:var(--paper); }
+
+  /* Obiettivi */
+  .goal-group{ display:flex; flex-direction:column; gap:6px; }
+  .goal-group h4{ font-size:10.5px; text-transform:uppercase; letter-spacing:1px; color:var(--paper-faint); margin:0 0 2px; font-family:var(--font-body); font-weight:700; }
+  .goal{ display:flex; align-items:center; gap:8px; font-size:12.5px; }
+  .goal .chk{ width:15px; height:15px; border-radius:4px; border:1.5px solid var(--brass-dim); flex:none; }
+  .goal.done .chk{ background:var(--brass); border-color:var(--brass); }
+  .goal.done .g-text{ text-decoration:line-through; color:var(--paper-faint); }
+  .goal .g-prog{ margin-left:auto; font-family:var(--font-mono); font-size:11px; color:var(--paper-faint); }
+  .goal-add{
+    background:none; border:1px dashed var(--line); color:var(--paper-faint);
+    border-radius:6px; padding:6px 8px; font-size:11.5px; text-align:left;
+  }
+
+  /* ============================================================
+     CRM
+     ============================================================ */
+  .crm-toolbar{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .view-switch{ display:flex; border:1px solid var(--line); border-radius:7px; overflow:hidden; }
+  .view-switch button{ background:var(--ink-900); border:none; color:var(--paper-dim); font-size:12px; padding:7px 12px; border-right:1px solid var(--line); }
+  .view-switch button:last-child{ border-right:none; }
+  .view-switch button.active{ background:var(--brass); color:var(--ink-950); font-weight:700; }
+  .nl-search{
+    flex:1; min-width:220px;
+    display:flex; align-items:center; gap:8px;
+    background:var(--ink-900); border:1px solid var(--line); border-radius:7px;
+    padding:7px 12px; color:var(--paper-dim); font-size:12.5px;
+  }
+  .nl-search svg{ width:14px; height:14px; opacity:.6; flex:none; }
+  .nl-search input{ background:none; border:none; color:var(--paper); outline:none; flex:1; font-family:inherit; font-size:12.5px; }
+
+  .kanban{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  @media (max-width:900px){ .kanban{ grid-template-columns:1fr; } }
+  .kcol{ background:var(--ink-850); border:1px solid var(--line-soft); border-radius:9px; padding:10px; display:flex; flex-direction:column; gap:8px; min-height:120px; }
+  .kcol-head{ display:flex; align-items:center; justify-content:space-between; font-size:10.5px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--paper-faint); padding:2px 4px 6px; border-bottom:1px solid var(--line-soft); }
+  .kcol-head .kcount{ font-family:var(--font-mono); color:var(--paper-dim); }
+  .kcard{
+    background:var(--ink-900); border:1px solid var(--line); border-left:3px solid var(--brass-dim);
+    border-radius:7px; padding:9px 10px; font-size:12px; cursor:grab;
+  }
+  .kcard.hot{ border-left-color:var(--bad); }
+  .kcard.warm{ border-left-color:var(--warn); }
+  .kcard.cold{ border-left-color:var(--paper-faint); }
+  .kcard .kc-title{ margin-bottom:5px; }
+  .kcard .kc-who{ font-size:11px; color:var(--paper-faint); display:flex; align-items:center; gap:5px; }
+
+  /* ============================================================
+     BARRA DI CATTURA — fissa in fondo
+     ============================================================ */
+  .capture-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    display:flex; justify-content:center;
+    padding:16px 22px 20px;
+    background:linear-gradient(transparent, var(--ink-950) 55%);
+    pointer-events:none;
+  }
+  .capture-inner{
+    pointer-events:auto;
+    width:100%; max-width:680px;
+    display:flex; align-items:center; gap:10px;
+    background:var(--ink-900);
+    border:1px solid var(--brass-dim);
+    border-radius:14px;
+    padding:8px 8px 8px 16px;
+    box-shadow:0 10px 40px -10px rgba(0,0,0,.7), 0 0 0 1px rgba(201,161,90,.05);
+  }
+  .capture-status{ font-size:9.5px; letter-spacing:1px; text-transform:uppercase; color:var(--paper-faint); white-space:nowrap; }
+  .capture-inner input{
+    flex:1; background:none; border:none; outline:none; color:var(--paper);
+    font-family:var(--font-body); font-size:14px;
+  }
+  .capture-inner input::placeholder{ color:var(--paper-faint); }
+  .mic-btn{
+    flex:none; width:38px; height:38px; border-radius:50%;
+    border:1px solid var(--line); background:var(--ink-800); color:var(--paper-dim);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .mic-btn svg{ width:16px; height:16px; }
+  .mic-btn.listening{ background:var(--brass); border-color:var(--brass); color:var(--ink-950); animation:pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(201,161,90,.45);} 50%{ box-shadow:0 0 0 9px rgba(201,161,90,0);} }
+  @media (prefers-reduced-motion: reduce){ .mic-btn.listening{ animation:none; } }
+
+  /* Review */
+  .review-block{ display:flex; flex-direction:column; gap:8px; }
+  .review-block h4{ font-family:var(--font-body); font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--brass); margin:0; }
+  .review-line{ font-size:13px; color:var(--paper-dim); display:flex; gap:8px; }
+  .review-line::before{ content:'—'; color:var(--paper-faint); }
+
+  .meta-tag{ font-size:10px; color:var(--paper-faint); }
+</style>
+</head>
+<body>
+
+  <!-- ============ CONTENITORE BARRA IN ALTO ============ -->
+  <div class="topbar-container">
+    <header class="topbar" id="topbar">
+      <div class="brand"><span class="mark">◈</span> ELYRA <span class="sub">memoria</span></div>
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-screen="home">Home</button>
+        <button class="tab" data-screen="crm">CRM</button>
+        <button class="tab" data-screen="finanze">Finanze</button>
+        <button class="tab" data-screen="review">Review</button>
+      </nav>
+      <div class="ledger" aria-label="strumenti rapidi">
+        <div class="gauge">
+          <span class="g-label">Streak</span>
+          <span class="g-value num up">6<small>gg</small></span>
+        </div>
+        <div class="gauge">
+          <span class="g-label">Focus</span>
+          <span class="g-value" style="font-size:12px;">RealGuide</span>
+        </div>
+        <div class="gauge">
+          <span class="g-label">Patrimonio</span>
+          <span class="g-value num up">+1,2<small>%</small></span>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- ============ CONTENITORE GRIGLIA — HOME ============ -->
+  <main class="screen" id="screen-home">
+    <div class="grid">
+
+      <section class="card" id="card-operator">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.6"/><path d="M2.5 14c1-3.2 3.3-4.8 5.5-4.8s4.5 1.6 5.5 4.8"/></svg>
+            Operator
+          </span>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="op-name">Davide</div>
+            <div class="op-role">Odontotecnico digitale · AD Service</div>
+            <div class="op-city">Consulenza CAD/CAM &amp; stampa 3D dentale</div>
+          </div>
+          <div class="streak">🔥 <b class="num">6</b> giorni di fila</div>
+        </div>
+      </section>
+
+      <section class="card" id="card-session">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l3 1.6"/></svg>
+            Session
+          </span>
+          <span class="plate-meta">martedì</span>
+        </div>
+        <div class="card-body">
+          <div class="greet">Buongiorno, Davide.</div>
+          <div class="clock-row">
+            <span class="clock num">07:42</span>
+            <span class="date-full">martedì 12 agosto</span>
+          </div>
+          <hr class="rule">
+          <ul class="today-list">
+            <li class="today-item"><span class="idx num">01</span><span class="band late">In ritardo</span> Preventivo Studio Rossi <span class="who">Marco</span></li>
+            <li class="today-item"><span class="idx num">02</span><span class="band today">Oggi</span> Richiamare fornitore resine <span class="who">Voxeldent</span></li>
+            <li class="today-item"><span class="idx num">03</span><span class="band today">Oggi</span> Slide corso RealGuide venerdì <span class="who">—</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" id="card-calendario">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="3.5" width="12" height="10.5" rx="1.4"/><path d="M2 6.5h12M5.5 2v3M10.5 2v3"/></svg>
+            Calendario
+          </span>
+          <span class="plate-meta">7 impegni</span>
+        </div>
+        <div class="card-body">
+          <div class="week-strip">
+            <div class="week-day">L<span class="d-num num">10</span></div>
+            <div class="week-day">M<span class="d-num num">11</span></div>
+            <div class="week-day is-today">M<span class="d-num num">12</span></div>
+            <div class="week-day">G<span class="d-num num">13</span></div>
+            <div class="week-day">V<span class="d-num num">14</span></div>
+            <div class="week-day">S<span class="d-num num">15</span></div>
+            <div class="week-day">D<span class="d-num num">16</span></div>
+          </div>
+          <div class="now-line" style="margin-top:2px;"></div>
+          <div class="agenda">
+            <div class="agenda-item"><time class="num">09:00</time> Scan intraorale — cliente Bianchi</div>
+            <div class="agenda-item"><time class="num">14:30</time> Call fornitore resine</div>
+            <div class="agenda-item"><time class="num">18:00</time> Prova stampante — laboratorio</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="card-abitudini">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2v3M8 11v3M2 8h3M11 8h3"/><circle cx="8" cy="8" r="2.4"/></svg>
+            Abitudini
+          </span>
+          <span class="plate-meta">oggi</span>
+        </div>
+        <div class="card-body">
+          <div class="ring-row">
+            <svg class="ring" width="52" height="52" viewBox="0 0 52 52">
+              <circle cx="26" cy="26" r="21" fill="none" stroke="var(--ink-800)" stroke-width="6"/>
+              <circle cx="26" cy="26" r="21" fill="none" stroke="var(--brass)" stroke-width="6" stroke-linecap="round"
+                stroke-dasharray="132" stroke-dashoffset="46" transform="rotate(-90 26 26)"/>
+            </svg>
+            <div class="ring-label">completate<br><b class="num">65%</b></div>
+          </div>
+          <div class="habit-list">
+            <div class="habit done"><span class="chk">✓</span> Allenamento</div>
+            <div class="habit"><span class="chk"></span> Lettura</div>
+            <div class="habit"><span class="chk">✓</span> Acqua <span class="cnt num">6/8</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="card-blocchi">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M5.5 8h5"/></svg>
+            Blocchi
+          </span>
+          <span class="plate-meta">2 fermi</span>
+        </div>
+        <div class="card-body">
+          <div class="block-item">Preventivo Studio Rossi <span class="days num">7gg</span></div>
+          <div class="block-item">Attesa risposta — commercialista <span class="days num">4gg</span></div>
+        </div>
+      </section>
+
+      <section class="card" id="card-polso">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 12l3.5-5 2.5 3 4-6 2 3"/></svg>
+            Polso finanziario
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="pulse-total">
+            <span class="amount num">€ 84.320</span>
+            <span class="delta up num">▲ 1.020 (30gg)</span>
+          </div>
+          <div class="pulse-bars">
+            <div class="pbar-row"><span class="pbar-label">Liquidità</span><div class="pbar-track"><div class="pbar-fill" style="width:38%"></div></div><span class="pbar-val num">€ 22.400</span></div>
+            <div class="pbar-row"><span class="pbar-label">Investito</span><div class="pbar-track"><div class="pbar-fill" style="width:70%"></div></div><span class="pbar-val num">€ 66.100</span></div>
+            <div class="pbar-row"><span class="pbar-label">Debiti</span><div class="pbar-track"><div class="pbar-fill debt" style="width:15%"></div></div><span class="pbar-val num">€ 4.180</span></div>
+          </div>
+          <div class="updated-row">aggiornato alle <span class="num">09:41</span><button class="btn-refresh">↻ aggiorna</button></div>
+        </div>
+      </section>
+
+      <section class="card" id="card-nutrizione">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 2v6a2 2 0 004 0V2M9 2v12M13 2c-1.5 1-1.5 3.5 0 5"/></svg>
+            Nutrizione
+          </span>
+          <span class="plate-meta">1.840 / 2.200 kcal</span>
+        </div>
+        <div class="card-body">
+          <div class="macro-row">
+            <div class="macro"><div class="m-label">Prot</div><div class="m-val num">112g</div></div>
+            <div class="macro"><div class="m-label">Carb</div><div class="m-val num">168g</div></div>
+            <div class="macro"><div class="m-label">Grassi</div><div class="m-val num">54g</div></div>
+          </div>
+          <div class="meal-list">
+            <div class="meal"><time class="num">08:10</time> Yogurt e avena <span class="pill-est">stima</span><span class="kcal num">320</span></div>
+            <div class="meal"><time class="num">13:00</time> Petto di pollo, riso, mela <span class="pill-est">stima</span><span class="kcal num">610</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="card-salute">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 9h3l1.5-4 2 8 1.5-4H14"/></svg>
+            Salute
+          </span>
+          <span class="plate-meta">30 giorni</span>
+        </div>
+        <div class="card-body">
+          <div class="avg-row">media su <b class="num">22</b> giorni registrati</div>
+          <table class="health-table">
+            <thead><tr><th>Giorno</th><th>kcal</th><th>Prot</th></tr></thead>
+            <tbody>
+              <tr><td>11 ago</td><td class="num">2.140</td><td class="num">118</td></tr>
+              <tr><td>10 ago</td><td class="num">1.980</td><td class="num">104</td></tr>
+              <tr><td>09 ago</td><td class="num">2.260</td><td class="num">121</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" id="card-obiettivi">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2a6 6 0 100 12 6 6 0 000-12z"/><circle cx="8" cy="8" r="1.6" fill="currentColor" stroke="none"/></svg>
+            Obiettivi
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="goal-group">
+            <h4>Questa settimana</h4>
+            <div class="goal done"><span class="chk">✓</span><span class="g-text">Chiudere preventivo Rossi</span></div>
+            <div class="goal"><span class="chk"></span><span class="g-text">Slide corso RealGuide</span><span class="g-prog num">3/5</span></div>
+            <button class="goal-add">+ aggiungi</button>
+          </div>
+          <div class="goal-group">
+            <h4>Questo mese</h4>
+            <div class="goal"><span class="chk"></span><span class="g-text">Firmare rinnovo fornitore resine</span></div>
+            <button class="goal-add">+ aggiungi</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============ CRM ============ -->
+  <main class="screen" id="screen-crm" hidden>
+    <section class="card" id="card-crm">
+      <div class="card-plate">
+        <span class="plate-name">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="5.5" r="2.6"/><path d="M2.5 14c1-3.2 3.3-4.8 5.5-4.8s4.5 1.6 5.5 4.8"/></svg>
+          CRM
+        </span>
+        <span class="plate-meta">chi aspetta cosa</span>
+      </div>
+      <div class="card-body">
+        <div class="crm-toolbar">
+          <div class="view-switch">
+            <button class="active">Kanban</button>
+            <button>Per persona</button>
+          </div>
+          <div class="nl-search">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.5"/><path d="M13.5 13.5L10.5 10.5"/></svg>
+            <input type="text" placeholder="cosa posso chiudere in dieci minuti?">
+          </div>
+        </div>
+        <div class="kanban">
+          <div class="kcol">
+            <div class="kcol-head">In ritardo <span class="kcount num">2</span></div>
+            <div class="kcard hot"><div class="kc-title">Preventivo Studio Rossi</div><div class="kc-who">👤 Marco</div></div>
+            <div class="kcard hot"><div class="kc-title">Firma contratto laboratorio</div><div class="kc-who">👤 —</div></div>
+          </div>
+          <div class="kcol">
+            <div class="kcol-head">Oggi <span class="kcount num">3</span></div>
+            <div class="kcard warm"><div class="kc-title">Richiamare fornitore resine</div><div class="kc-who">👤 Voxeldent</div></div>
+            <div class="kcard warm"><div class="kc-title">Slide corso RealGuide</div><div class="kc-who">👤 —</div></div>
+            <div class="kcard cold"><div class="kc-title">Rispondere email Bianchi</div><div class="kc-who">👤 Bianchi</div></div>
+          </div>
+          <div class="kcol">
+            <div class="kcol-head">Questa settimana <span class="kcount num">2</span></div>
+            <div class="kcard cold"><div class="kc-title">Ordinare resina biocompatibile</div><div class="kc-who">👤 —</div></div>
+            <div class="kcard cold"><div class="kc-title">Prova nuova stampante</div><div class="kc-who">👤 —</div></div>
+          </div>
+          <div class="kcol">
+            <div class="kcol-head">Più avanti <span class="kcount num">1</span></div>
+            <div class="kcard cold"><div class="kc-title">Aggiornare listino corsi</div><div class="kc-who">👤 —</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FINANZE ============ -->
+  <main class="screen" id="screen-finanze" hidden>
+    <div class="grid g2">
+      <section class="card span-2" id="card-finanze">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 12l3.5-5 2.5 3 4-6 2 3"/></svg>
+            Finanze
+          </span>
+          <span class="plate-meta">storico mensile</span>
+        </div>
+        <div class="card-body">
+          <div class="pulse-total">
+            <span class="amount num" style="font-size:34px;">€ 84.320</span>
+            <span class="delta up num">▲ 1.020 (30gg) · ▲ 9.400 (1a)</span>
+          </div>
+          <div class="pulse-bars">
+            <div class="pbar-row"><span class="pbar-label">Liquidità</span><div class="pbar-track"><div class="pbar-fill" style="width:38%"></div></div><span class="pbar-val num">€ 22.400</span></div>
+            <div class="pbar-row"><span class="pbar-label">Investito</span><div class="pbar-track"><div class="pbar-fill" style="width:70%"></div></div><span class="pbar-val num">€ 66.100</span></div>
+            <div class="pbar-row"><span class="pbar-label">Debiti</span><div class="pbar-track"><div class="pbar-fill debt" style="width:15%"></div></div><span class="pbar-val num">€ 4.180</span></div>
+          </div>
+          <table class="health-table">
+            <thead><tr><th>Mese</th><th>Patrimonio</th><th>Δ</th></tr></thead>
+            <tbody>
+              <tr><td>Agosto</td><td class="num">84.320</td><td class="num" style="color:var(--good)">+1.020</td></tr>
+              <tr><td>Luglio</td><td class="num">83.300</td><td class="num" style="color:var(--good)">+640</td></tr>
+              <tr><td>Giugno</td><td class="num">82.660</td><td class="num" style="color:var(--bad)">-210</td></tr>
+            </tbody>
+          </table>
+          <div class="updated-row">aggiornato alle <span class="num">09:41</span> · nota: nessuna ambiguità rilevata nel foglio<button class="btn-refresh">↻ aggiorna</button></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ REVIEW ============ -->
+  <main class="screen" id="screen-review" hidden>
+    <div class="grid g1">
+      <section class="card" id="card-review">
+        <div class="card-plate">
+          <span class="plate-name">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2.5" y="2" width="11" height="12" rx="1.4"/><path d="M5 5.5h6M5 8h6M5 10.5h3.5"/></svg>
+            Review
+          </span>
+          <span class="plate-meta">settimana del 5–11 agosto</span>
+        </div>
+        <div class="card-body">
+          <div class="review-block">
+            <h4>Chiuso</h4>
+            <div class="review-line">4 task completati, tra cui il preventivo Bianchi</div>
+          </div>
+          <div class="review-block">
+            <h4>Slittato</h4>
+            <div class="review-line">Preventivo Studio Rossi — terza settimana di fila</div>
+          </div>
+          <div class="review-block">
+            <h4>Persone in silenzio</h4>
+            <div class="review-line">Fornitore Voxeldent non risponde da 9 giorni</div>
+          </div>
+          <div class="review-block">
+            <h4>Abitudini &amp; pasti</h4>
+            <div class="review-line">Allenamento 5/7 · media 2.080 kcal su 6 giorni registrati</div>
+          </div>
+          <div class="review-block">
+            <h4>Le tre priorità della prossima settimana</h4>
+            <div class="review-line">1. Chiudere Studio Rossi</div>
+            <div class="review-line">2. Slide corso RealGuide</div>
+            <div class="review-line">3. Rinnovo fornitore resine</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ BARRA DI CATTURA — fissa, sempre presente ============ -->
+  <div class="capture-bar">
+    <div class="capture-inner">
+      <span class="capture-status" id="captureStatus">a riposo</span>
+      <input type="text" id="captureInput" placeholder="dì la cosa — scriverla o parlarla va bene uguale">
+      <button class="mic-btn" id="micBtn" aria-label="Registra a voce">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="6" y="1.5" width="4" height="7" rx="2"/><path d="M3.5 7.5a4.5 4.5 0 009 0M8 12v2.5M6 14.5h4"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Cambio schermata — cosmetico nel mockup, diventa routing vero nel porting (A4).
+    document.getElementById('tabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.tab');
+      if (!btn) return;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.dataset.screen;
+      document.querySelectorAll('.screen').forEach(s => {
+        s.hidden = (s.id !== 'screen-' + target);
+      });
+    });
+
+    // Stato del microfono — cosmetico qui, diventa Web Speech API reale in A11.
+    const micBtn = document.getElementById('micBtn');
+    const status = document.getElementById('captureStatus');
+    let listening = false;
+    micBtn.addEventListener('click', () => {
+      listening = !listening;
+      micBtn.classList.toggle('listening', listening);
+      status.textContent = listening ? 'in ascolto' : 'a riposo';
+    });
+  </script>
+
+</body>
+</html>
