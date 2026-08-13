@@ -1,6 +1,7 @@
 import Link from "next/link";
 import DashboardGrid from "@/components/DashboardGrid";
 import Clock from "@/components/Clock";
+import CalendarioCard from "@/components/CalendarioCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
 import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
 import { calcolaStriscia } from "@/lib/streak";
@@ -120,48 +121,7 @@ export default async function HomeScreen() {
         </div>
       </section>
 
-      <section className="card" id="card-calendario">
-        <div className="card-plate">
-          <span className="plate-name">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-              <rect x="2" y="3.5" width="12" height="10.5" rx="1.4" />
-              <path d="M2 6.5h12M5.5 2v3M10.5 2v3" />
-            </svg>
-            Calendario
-          </span>
-          <span className="plate-meta">7 impegni</span>
-        </div>
-        <div className="card-body">
-          <div className="week-strip">
-            {["L", "M", "M", "G", "V", "S", "D"].map((d, i) => {
-              const dayNum = 10 + i;
-              const isToday = dayNum === 12;
-              return (
-                <button
-                  type="button"
-                  key={i}
-                  className={`week-day${isToday ? " is-today" : ""}`}
-                >
-                  {d}
-                  <span className="d-num num">{dayNum}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="now-line" style={{ marginTop: 2 }} />
-          <div className="agenda">
-            <div className="agenda-item">
-              <time className="num">09:00</time> Scan intraorale — cliente Bianchi
-            </div>
-            <div className="agenda-item">
-              <time className="num">14:30</time> Call fornitore resine
-            </div>
-            <div className="agenda-item">
-              <time className="num">18:00</time> Prova stampante — laboratorio
-            </div>
-          </div>
-        </div>
-      </section>
+      <CalendarioCard />
 
       <section className="card" id="card-abitudini">
         <div className="card-plate">
