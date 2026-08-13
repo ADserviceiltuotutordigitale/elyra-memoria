@@ -6,6 +6,7 @@ import AbitudiniCard from "@/components/AbitudiniCard";
 import NutrizioneCard from "@/components/NutrizioneCard";
 import SaluteCard from "@/components/SaluteCard";
 import ObiettiviCard from "@/components/ObiettiviCard";
+import PolsoFinanziarioCard from "@/components/PolsoFinanziarioCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
 import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
 import { calcolaStriscia } from "@/lib/streak";
@@ -150,51 +151,7 @@ export default async function HomeScreen() {
         </div>
       </section>
 
-      <section className="card" id="card-polso">
-        <div className="card-plate">
-          <span className="plate-name">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-              <path d="M2 12l3.5-5 2.5 3 4-6 2 3" />
-            </svg>
-            Polso finanziario
-          </span>
-        </div>
-        <div className="card-body">
-          <div className="pulse-total">
-            <span className="amount num">€ 84.320</span>
-            <span className="delta up num">▲ 1.020 (30gg)</span>
-          </div>
-          <div className="pulse-bars">
-            <div className="pbar-row">
-              <span className="pbar-label">Liquidità</span>
-              <div className="pbar-track">
-                <div className="pbar-fill" style={{ width: "38%" }} />
-              </div>
-              <span className="pbar-val num">€ 22.400</span>
-            </div>
-            <div className="pbar-row">
-              <span className="pbar-label">Investito</span>
-              <div className="pbar-track">
-                <div className="pbar-fill" style={{ width: "70%" }} />
-              </div>
-              <span className="pbar-val num">€ 66.100</span>
-            </div>
-            <div className="pbar-row">
-              <span className="pbar-label">Debiti</span>
-              <div className="pbar-track">
-                <div className="pbar-fill debt" style={{ width: "15%" }} />
-              </div>
-              <span className="pbar-val num">€ 4.180</span>
-            </div>
-          </div>
-          <div className="updated-row">
-            aggiornato alle <span className="num">09:41</span>
-            <button type="button" className="btn-refresh">
-              ↻ aggiorna
-            </button>
-          </div>
-        </div>
-      </section>
+      <PolsoFinanziarioCard />
 
       <NutrizioneCard />
 
