@@ -281,7 +281,9 @@ button{font-family:inherit;cursor:pointer;}
   padding:8px 10px; border-radius:7px;
   background:var(--ink-850); border:1px solid var(--line-soft);
   font-size:12.5px;
+  width:100%; text-align:left; color:var(--paper);
 }
+.habit:hover{ border-color:var(--brass-dim); }
 .habit .chk{
   width:18px; height:18px; border-radius:5px; border:1.5px solid var(--brass-dim);
   display:flex; align-items:center; justify-content:center; flex:none;

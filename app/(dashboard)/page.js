@@ -2,6 +2,7 @@ import Link from "next/link";
 import DashboardGrid from "@/components/DashboardGrid";
 import Clock from "@/components/Clock";
 import CalendarioCard from "@/components/CalendarioCard";
+import AbitudiniCard from "@/components/AbitudiniCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
 import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
 import { calcolaStriscia } from "@/lib/streak";
@@ -123,53 +124,7 @@ export default async function HomeScreen() {
 
       <CalendarioCard />
 
-      <section className="card" id="card-abitudini">
-        <div className="card-plate">
-          <span className="plate-name">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-              <path d="M8 2v3M8 11v3M2 8h3M11 8h3" />
-              <circle cx="8" cy="8" r="2.4" />
-            </svg>
-            Abitudini
-          </span>
-          <span className="plate-meta">oggi</span>
-        </div>
-        <div className="card-body">
-          <div className="ring-row">
-            <svg className="ring" width="52" height="52" viewBox="0 0 52 52">
-              <circle cx="26" cy="26" r="21" fill="none" stroke="var(--ink-800)" strokeWidth="6" />
-              <circle
-                cx="26"
-                cy="26"
-                r="21"
-                fill="none"
-                stroke="var(--brass)"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray="132"
-                strokeDashoffset="46"
-                transform="rotate(-90 26 26)"
-              />
-            </svg>
-            <div className="ring-label">
-              completate
-              <br />
-              <b className="num">65%</b>
-            </div>
-          </div>
-          <div className="habit-list">
-            <div className="habit done">
-              <span className="chk">✓</span> Allenamento
-            </div>
-            <div className="habit">
-              <span className="chk" /> Lettura
-            </div>
-            <div className="habit done">
-              <span className="chk">✓</span> Acqua <span className="cnt num">6/8</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AbitudiniCard />
 
       <section className="card" id="card-blocchi">
         <div className="card-plate">
