@@ -12,11 +12,37 @@ const ETICHETTE_DESTINAZIONE = {
   memoria: "memoria",
 };
 
+const PAROLE_INTERROGATIVE = [
+  "chi",
+  "cosa",
+  "come",
+  "quando",
+  "dove",
+  "perché",
+  "perche",
+  "quale",
+  "quali",
+  "quanto",
+  "quanti",
+  "quanta",
+  "quante",
+];
+
+// Non decidi in anticipo se quello che stai per dire è un'informazione o
+// una domanda — lo dici e basta (Parte 6, A17).
+function eDomanda(testo) {
+  const t = testo.trim().toLowerCase();
+  if (t.endsWith("?")) return true;
+  const primaParola = t.split(/\s+/)[0]?.replace(/[^a-zàèéìòù]/gi, "");
+  return PAROLE_INTERROGATIVE.includes(primaParola);
+}
+
 export default function CaptureBar() {
   const [testo, setTesto] = useState("");
   const [stato, setStato] = useState("riposo"); // riposo | ascolto | elaborazione | fatto
   const [messaggio, setMessaggio] = useState("a riposo");
   const [ascoltoSupportato, setAscoltoSupportato] = useState(false);
+  const [risposta, setRisposta] = useState(null);
   const riconoscimentoRef = useRef(null);
 
   // Il browser sa già ascoltare — nessun servizio esterno (Parte 4).
@@ -34,7 +60,7 @@ export default function CaptureBar() {
     riconoscimento.onresult = (event) => {
       const trascrizione = event.results[0][0].transcript;
       setTesto(trascrizione);
-      inviaCattura(trascrizione);
+      invia(trascrizione);
     };
     riconoscimento.onerror = () => {
       setStato("riposo");
@@ -46,6 +72,14 @@ export default function CaptureBar() {
 
     riconoscimentoRef.current = riconoscimento;
     setAscoltoSupportato(true);
+  }, []);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") setRisposta(null);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   function toggleMic() {
@@ -61,7 +95,28 @@ export default function CaptureBar() {
     riconoscimentoRef.current.start();
   }
 
-  async function inviaCattura(testoDaInviare) {
+  async function chiedi(domanda) {
+    setStato("elaborazione");
+    setMessaggio("in elaborazione");
+    try {
+      const res = await fetch("/api/domande", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domanda }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error || "errore");
+      setRisposta(body.risposta);
+      setTesto("");
+    } catch {
+      setRisposta("Non sono riuscita a rispondere — riprova.");
+    } finally {
+      setStato("riposo");
+      setMessaggio("a riposo");
+    }
+  }
+
+  async function archivia(testoDaInviare) {
     const valore = (testoDaInviare ?? testo).trim();
     if (!valore) return;
 
@@ -91,13 +146,38 @@ export default function CaptureBar() {
     }
   }
 
+  function invia(testoDaInviare) {
+    const valore = (testoDaInviare ?? testo).trim();
+    if (!valore) return;
+    if (eDomanda(valore)) chiedi(valore);
+    else archivia(valore);
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    inviaCattura();
+    invia();
   }
 
   return (
     <div className="capture-bar">
+      {risposta && (
+        <div className="risposta-panel">
+          <div className="risposta-panel-inner">
+            <div className="risposta-panel-header">
+              Risposta
+              <button
+                type="button"
+                className="risposta-panel-close"
+                onClick={() => setRisposta(null)}
+                aria-label="Chiudi"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="risposta-panel-testo">{risposta}</div>
+          </div>
+        </div>
+      )}
       <form className="capture-inner" onSubmit={handleSubmit}>
         <span className="capture-status">{messaggio}</span>
         <input

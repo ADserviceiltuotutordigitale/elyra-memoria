@@ -433,11 +433,35 @@ button{font-family:inherit;cursor:pointer;}
    ============================================================ */
 .capture-bar{
   position:fixed; left:0; right:0; bottom:0; z-index:50;
-  display:flex; justify-content:center;
+  display:flex; flex-direction:column; align-items:center;
   padding:16px 22px 20px;
   background:linear-gradient(transparent, var(--ink-950) 55%);
   pointer-events:none;
 }
+
+/* Il pannello di risposta si espande verso l'alto, sopra la barra
+   (Parte 6, A17) — stessa barra, doppio uso. */
+.risposta-panel{
+  width:100%; max-width:680px;
+  margin-bottom:10px;
+  pointer-events:auto;
+}
+.risposta-panel-inner{
+  background:var(--ink-900); border:1px solid var(--brass-dim); border-radius:14px;
+  padding:12px 16px 14px;
+  box-shadow:0 10px 40px -10px rgba(0,0,0,.7);
+  display:flex; flex-direction:column; gap:8px;
+  animation:risposta-in .18s ease-out;
+}
+@keyframes risposta-in{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+@media (prefers-reduced-motion: reduce){ .risposta-panel-inner{ animation:none; } }
+.risposta-panel-header{
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--brass); font-weight:700;
+}
+.risposta-panel-close{ background:none; border:none; color:var(--paper-faint); font-size:15px; padding:0 2px; }
+.risposta-panel-close:hover{ color:var(--paper); }
+.risposta-panel-testo{ font-size:13px; color:var(--paper); line-height:1.55; }
 .capture-inner{
   pointer-events:auto;
   width:100%; max-width:680px;
