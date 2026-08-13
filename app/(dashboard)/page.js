@@ -5,6 +5,7 @@ import CalendarioCard from "@/components/CalendarioCard";
 import AbitudiniCard from "@/components/AbitudiniCard";
 import NutrizioneCard from "@/components/NutrizioneCard";
 import SaluteCard from "@/components/SaluteCard";
+import ObiettiviCard from "@/components/ObiettiviCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
 import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
 import { calcolaStriscia } from "@/lib/streak";
@@ -199,44 +200,7 @@ export default async function HomeScreen() {
 
       <SaluteCard />
 
-      <section className="card" id="card-obiettivi">
-        <div className="card-plate">
-          <span className="plate-name">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-              <path d="M8 2a6 6 0 100 12 6 6 0 000-12z" />
-              <circle cx="8" cy="8" r="1.6" fill="currentColor" stroke="none" />
-            </svg>
-            Obiettivi
-          </span>
-        </div>
-        <div className="card-body">
-          <div className="goal-group">
-            <h4>Questa settimana</h4>
-            <div className="goal done">
-              <span className="chk">✓</span>
-              <span className="g-text">Chiudere preventivo Rossi</span>
-            </div>
-            <div className="goal">
-              <span className="chk" />
-              <span className="g-text">Slide corso RealGuide</span>
-              <span className="g-prog num">3/5</span>
-            </div>
-            <button type="button" className="goal-add">
-              + aggiungi
-            </button>
-          </div>
-          <div className="goal-group">
-            <h4>Questo mese</h4>
-            <div className="goal">
-              <span className="chk" />
-              <span className="g-text">Firmare rinnovo fornitore resine</span>
-            </div>
-            <button type="button" className="goal-add">
-              + aggiungi
-            </button>
-          </div>
-        </div>
-      </section>
+      <ObiettiviCard />
     </DashboardGrid>
   );
 }

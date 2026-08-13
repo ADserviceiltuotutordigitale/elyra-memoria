@@ -351,6 +351,8 @@ button{font-family:inherit;cursor:pointer;}
 .goal.done .chk{ background:var(--brass); border-color:var(--brass); }
 .goal.done .g-text{ text-decoration:line-through; color:var(--paper-faint); }
 .goal .g-prog{ margin-left:auto; font-family:var(--font-mono); font-size:11px; color:var(--paper-faint); }
+.goal-remove{ opacity:0; }
+.goal:hover .goal-remove{ opacity:1; }
 .goal-add{
   background:none; border:1px dashed var(--line); color:var(--paper-faint);
   border-radius:6px; padding:6px 8px; font-size:11.5px; text-align:left;
