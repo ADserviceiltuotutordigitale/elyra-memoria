@@ -387,6 +387,44 @@ button{font-family:inherit;cursor:pointer;}
 .kcard.cold{ border-left-color:var(--paper-faint); }
 .kcard .kc-title{ margin-bottom:5px; }
 .kcard .kc-who{ font-size:11px; color:var(--paper-faint); display:flex; align-items:center; gap:5px; }
+.kcard{ text-align:left; }
+.kcard.dragging{ opacity:.4; }
+
+/* Per persona */
+.person-group{ margin-bottom:18px; }
+.person-group h4{ font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--brass); margin:0 0 8px; font-family:var(--font-body); font-weight:700; }
+.person-items{ display:flex; flex-direction:column; gap:6px; }
+
+/* Pannello laterale */
+.crm-panel-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:60; }
+.crm-panel{
+  position:fixed; top:0; right:0; bottom:0; width:400px; max-width:92vw;
+  background:var(--ink-900); border-left:1px solid var(--line); z-index:61;
+  display:flex; flex-direction:column;
+  box-shadow:-20px 0 60px -20px rgba(0,0,0,.7);
+}
+.crm-panel-header{
+  padding:14px 16px; border-bottom:1px solid var(--line-soft);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--brass); font-weight:700;
+}
+.crm-panel-close{ background:none; border:none; color:var(--paper-faint); font-size:18px; line-height:1; padding:2px 6px; }
+.crm-panel-close:hover{ color:var(--paper); }
+.crm-panel-body{ padding:16px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:14px; }
+.crm-field label{ font-size:10.5px; text-transform:uppercase; letter-spacing:1px; color:var(--paper-faint); display:block; margin-bottom:5px; }
+.crm-field input, .crm-field textarea, .crm-field select{
+  width:100%; background:var(--ink-850); border:1px solid var(--line-soft); border-radius:7px;
+  padding:8px 10px; color:var(--paper); font-family:var(--font-body); font-size:13px;
+}
+.crm-field textarea{ resize:vertical; min-height:64px; }
+.crm-field-row{ display:flex; gap:10px; }
+.crm-field-row .crm-field{ flex:1; }
+.crm-panel-actions{ display:flex; gap:8px; padding:14px 16px; border-top:1px solid var(--line-soft); }
+.btn-danger{ color:var(--bad); border-color:var(--bad-dim); }
+.btn-danger:hover{ background:rgba(196,99,107,.1); }
+.btn-primary{ background:var(--brass); color:var(--ink-950); font-weight:700; border:1px solid var(--brass); }
+.btn-primary:hover{ background:var(--brass-bright); }
+.ricerca-meta{ font-size:10.5px; color:var(--paper-faint); margin-bottom:10px; }
 
 /* ============================================================
    BARRA DI CATTURA — fissa in fondo
