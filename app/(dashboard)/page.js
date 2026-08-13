@@ -3,6 +3,7 @@ import DashboardGrid from "@/components/DashboardGrid";
 import Clock from "@/components/Clock";
 import CalendarioCard from "@/components/CalendarioCard";
 import AbitudiniCard from "@/components/AbitudiniCard";
+import NutrizioneCard from "@/components/NutrizioneCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
 import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
 import { calcolaStriscia } from "@/lib/streak";
@@ -193,45 +194,7 @@ export default async function HomeScreen() {
         </div>
       </section>
 
-      <section className="card" id="card-nutrizione">
-        <div className="card-plate">
-          <span className="plate-name">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-              <path d="M5 2v6a2 2 0 004 0V2M9 2v12M13 2c-1.5 1-1.5 3.5 0 5" />
-            </svg>
-            Nutrizione
-          </span>
-          <span className="plate-meta">1.840 / 2.200 kcal</span>
-        </div>
-        <div className="card-body">
-          <div className="macro-row">
-            <div className="macro">
-              <div className="m-label">Prot</div>
-              <div className="m-val num">112g</div>
-            </div>
-            <div className="macro">
-              <div className="m-label">Carb</div>
-              <div className="m-val num">168g</div>
-            </div>
-            <div className="macro">
-              <div className="m-label">Grassi</div>
-              <div className="m-val num">54g</div>
-            </div>
-          </div>
-          <div className="meal-list">
-            <div className="meal">
-              <time className="num">08:10</time> Yogurt e avena{" "}
-              <span className="pill-est">stima</span>
-              <span className="kcal num">320</span>
-            </div>
-            <div className="meal">
-              <time className="num">13:00</time> Petto di pollo, riso, mela{" "}
-              <span className="pill-est">stima</span>
-              <span className="kcal num">610</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <NutrizioneCard />
 
       <section className="card" id="card-salute">
         <div className="card-plate">
