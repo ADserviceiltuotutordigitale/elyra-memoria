@@ -4,6 +4,7 @@ import Clock from "@/components/Clock";
 import CalendarioCard from "@/components/CalendarioCard";
 import AbitudiniCard from "@/components/AbitudiniCard";
 import NutrizioneCard from "@/components/NutrizioneCard";
+import SaluteCard from "@/components/SaluteCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
 import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
 import { calcolaStriscia } from "@/lib/streak";
@@ -196,48 +197,7 @@ export default async function HomeScreen() {
 
       <NutrizioneCard />
 
-      <section className="card" id="card-salute">
-        <div className="card-plate">
-          <span className="plate-name">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3">
-              <path d="M2 9h3l1.5-4 2 8 1.5-4H14" />
-            </svg>
-            Salute
-          </span>
-          <span className="plate-meta">30 giorni</span>
-        </div>
-        <div className="card-body">
-          <div className="avg-row">
-            media su <b className="num">22</b> giorni registrati
-          </div>
-          <table className="health-table">
-            <thead>
-              <tr>
-                <th>Giorno</th>
-                <th>kcal</th>
-                <th>Prot</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>11 ago</td>
-                <td className="num">2.140</td>
-                <td className="num">118</td>
-              </tr>
-              <tr>
-                <td>10 ago</td>
-                <td className="num">1.980</td>
-                <td className="num">104</td>
-              </tr>
-              <tr>
-                <td>09 ago</td>
-                <td className="num">2.260</td>
-                <td className="num">121</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <SaluteCard />
 
       <section className="card" id="card-obiettivi">
         <div className="card-plate">
