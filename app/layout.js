@@ -1,7 +1,5 @@
 import { Fraunces, Manrope, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import TopBar from "@/components/TopBar";
-import CaptureBar from "@/components/CaptureBar";
 
 const fraunces = Fraunces({
   variable: "--font-display",
@@ -30,11 +28,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="it" className={`${fraunces.variable} ${manrope.variable} ${plexMono.variable}`}>
-      <body>
-        <TopBar />
-        {children}
-        <CaptureBar />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
