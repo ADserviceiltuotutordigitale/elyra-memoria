@@ -1,8 +1,53 @@
+import Link from "next/link";
 import DashboardGrid from "@/components/DashboardGrid";
+import Clock from "@/components/Clock";
+import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
+import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
+import { calcolaStriscia } from "@/lib/streak";
 
-// Dati scritti a mano — A4. I dati veri si collegano in A13.x, quando
-// ogni scheda legge dalle sue rotte API sopra lib/store.js.
-export default function HomeScreen() {
+// Legge dati veri a ogni richiesta (profilo, task, log). Senza questo,
+// Next la prerenderizza come statica al momento della build e la Home
+// resterebbe congelata a quel momento — Parte 8, "Dopo un refresh vedi
+// il dato di prima".
+export const dynamic = "force-dynamic";
+
+const ORDINE_FASCIA = { in_ritardo: 0, oggi: 1, settimana: 2, piu_avanti: 3 };
+const ORDINE_TEMPERATURA = { caldo: 0, tiepido: 1, freddo: 2 };
+const ETICHETTA_FASCIA = { in_ritardo: "In ritardo", oggi: "Oggi" };
+const CLASSE_FASCIA = { in_ritardo: "late", oggi: "today" };
+
+function trentaGiorniPrima(dataISO) {
+  const [y, m, d] = dataISO.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() - 30);
+  return dt.toISOString().slice(0, 10);
+}
+
+// Dati d'esempio ancora per Calendario, Blocchi, Polso, Nutrizione,
+// Salute e Obiettivi — arrivano con A13.2 e successivi. Operator e
+// Session sono già collegati ai dati veri (A13.1).
+export default async function HomeScreen() {
+  const oggi = oggiISO();
+
+  const [profilo, taskAperti, logUltimiTrenta] = await Promise.all([
+    getProfilo(),
+    getTask(),
+    getLogGiornalieroRange(trentaGiorniPrima(oggi), oggi),
+  ]);
+
+  const striscia = calcolaStriscia(logUltimiTrenta, oggi);
+
+  const treTaskDiOggi = taskAperti
+    .filter((t) => t.fascia === "in_ritardo" || t.fascia === "oggi")
+    .sort((a, b) => {
+      const f = ORDINE_FASCIA[a.fascia] - ORDINE_FASCIA[b.fascia];
+      if (f !== 0) return f;
+      const t = ORDINE_TEMPERATURA[a.temperatura] - ORDINE_TEMPERATURA[b.temperatura];
+      if (t !== 0) return t;
+      return a.posizione - b.posizione;
+    })
+    .slice(0, 3);
+
   return (
     <DashboardGrid cols={3}>
       <section className="card" id="card-operator">
@@ -17,12 +62,18 @@ export default function HomeScreen() {
         </div>
         <div className="card-body">
           <div>
-            <div className="op-name">Davide</div>
-            <div className="op-role">Odontotecnico digitale · AD Service</div>
-            <div className="op-city">Consulenza CAD/CAM &amp; stampa 3D dentale</div>
+            <div className="op-name">{profilo.nome || "—"}</div>
+            <div className="op-role">{profilo.ruolo}</div>
+            <div className="op-city">{profilo.citta}</div>
           </div>
+          {profilo.focus_del_giorno && (
+            <div className="op-focus">
+              <span className="op-focus-label">Focus di oggi</span>
+              {profilo.focus_del_giorno}
+            </div>
+          )}
           <div className="streak">
-            <b className="num">6</b> giorni di fila
+            <b className="num">{striscia}</b> giorni di fila
           </div>
         </div>
       </section>
@@ -36,32 +87,36 @@ export default function HomeScreen() {
             </svg>
             Session
           </span>
-          <span className="plate-meta">martedì</span>
         </div>
         <div className="card-body">
-          <div className="greet">Buongiorno, Davide.</div>
+          <div className="greet">
+            {saluto()}, {profilo.nome || "—"}.
+          </div>
           <div className="clock-row">
-            <span className="clock num">07:42</span>
-            <span className="date-full">martedì 12 agosto</span>
+            <Clock />
+            <span className="date-full">{formattaDataPerEsteso()}</span>
           </div>
           <hr className="rule" />
-          <ul className="today-list">
-            <li className="today-item">
-              <span className="idx num">01</span>
-              <span className="band late">In ritardo</span> Preventivo Studio Rossi
-              <span className="who">Marco</span>
-            </li>
-            <li className="today-item">
-              <span className="idx num">02</span>
-              <span className="band today">Oggi</span> Richiamare fornitore resine
-              <span className="who">Voxeldent</span>
-            </li>
-            <li className="today-item">
-              <span className="idx num">03</span>
-              <span className="band today">Oggi</span> Slide corso RealGuide venerdì
-              <span className="who">—</span>
-            </li>
-          </ul>
+          {treTaskDiOggi.length === 0 ? (
+            <div style={{ color: "var(--paper-faint)", fontSize: 13 }}>
+              Niente in scadenza oggi.
+            </div>
+          ) : (
+            <ul className="today-list">
+              {treTaskDiOggi.map((t, i) => (
+                <li className="today-item" key={t.id}>
+                  <span className="idx num">{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`band ${CLASSE_FASCIA[t.fascia]}`}>
+                    {ETICHETTA_FASCIA[t.fascia]}
+                  </span>{" "}
+                  <Link href={`/crm?task=${t.id}`} style={{ color: "inherit" }}>
+                    {t.titolo}
+                  </Link>
+                  <span className="who">{t.persone?.nome || "—"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
 

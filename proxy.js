@@ -24,7 +24,7 @@ function withNoindex(response) {
   return response;
 }
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   if (isPublic(pathname)) {

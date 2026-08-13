@@ -19,3 +19,10 @@ Percorso Completo (Supabase + Vercel + Telegram), costruito seguendo PersonalOS
 - **Obiettivi**: le due liste (settimana/mese) vivono nel log giornaliero su una riga
   con data sentinella fissa `2000-01-01`, che non scade mai. È un trucco intenzionale,
   non un bug — non "correggerlo".
+- **Il cancello si chiama `proxy.js`, non `middleware.js`.** Su questa serie di Next
+  (16) `middleware` è deprecato a favore di `proxy` — stessa cosa, nome nuovo. Vedi
+  `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`.
+- **Ogni pagina che legge dati veri da `lib/store.js` deve esportare
+  `export const dynamic = "force-dynamic"`.** Senza, Next la prerenderizza come
+  statica al momento della build e i dati restano congelati a quel momento — non
+  è un bug del database, è la cache di Next (Parte 8).
