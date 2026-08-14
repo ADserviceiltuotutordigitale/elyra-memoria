@@ -1,4 +1,6 @@
 import { eseguiCattura } from "@/lib/capture";
+import { rispondiADomanda } from "@/lib/domande";
+import { eDomanda } from "@/lib/testo";
 import { updateTask } from "@/lib/store";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -72,6 +74,18 @@ async function gestisciMessaggio(message) {
     }
   }
   if (!testo || !testo.trim()) return;
+
+  // Stessa barra, doppio uso: se sembra una domanda risponde invece di
+  // archiviare — stesso riconoscimento della dashboard (Parte 6, A17).
+  if (eDomanda(testo)) {
+    try {
+      const { risposta } = await rispondiADomanda(testo);
+      await inviaMessaggio(chatId, risposta);
+    } catch {
+      await inviaMessaggio(chatId, "Non sono riuscita a rispondere — riprova.");
+    }
+    return;
+  }
 
   const risultato = await eseguiCattura(testo, { provenienza: "telegram" });
   const tastiera = risultato.task ? tastieraUrgenza(risultato.task.id) : undefined;

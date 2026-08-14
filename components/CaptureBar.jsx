@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { eDomanda } from "@/lib/testo";
 
 const ETICHETTE_DESTINAZIONE = {
   task: "task",
@@ -11,31 +12,6 @@ const ETICHETTE_DESTINAZIONE = {
   obiettivi: "obiettivi",
   memoria: "memoria",
 };
-
-const PAROLE_INTERROGATIVE = [
-  "chi",
-  "cosa",
-  "come",
-  "quando",
-  "dove",
-  "perché",
-  "perche",
-  "quale",
-  "quali",
-  "quanto",
-  "quanti",
-  "quanta",
-  "quante",
-];
-
-// Non decidi in anticipo se quello che stai per dire è un'informazione o
-// una domanda — lo dici e basta (Parte 6, A17).
-function eDomanda(testo) {
-  const t = testo.trim().toLowerCase();
-  if (t.endsWith("?")) return true;
-  const primaParola = t.split(/\s+/)[0]?.replace(/[^a-zàèéìòù]/gi, "");
-  return PAROLE_INTERROGATIVE.includes(primaParola);
-}
 
 export default function CaptureBar() {
   const [testo, setTesto] = useState("");
