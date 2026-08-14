@@ -321,27 +321,11 @@ button{font-family:inherit;cursor:pointer;}
 }
 .btn-refresh:hover{ border-color:var(--brass-dim); color:var(--paper); }
 
-/* Nutrizione */
-.macro-row{ display:flex; gap:10px; }
-.macro{
-  flex:1; text-align:center; padding:8px 4px; border-radius:7px;
-  background:var(--ink-850); border:1px solid var(--line-soft);
-}
-.macro .m-label{ font-size:10px; color:var(--paper-faint); text-transform:uppercase; letter-spacing:.6px; }
-.macro .m-val{ font-family:var(--font-mono); font-size:15px; margin-top:2px; }
-.meal-list{ display:flex; flex-direction:column; gap:6px; }
-.meal{ display:flex; align-items:center; gap:8px; font-size:12px; }
-.meal time{ font-family:var(--font-mono); color:var(--paper-faint); width:38px; flex:none; }
-.meal .kcal{ margin-left:auto; font-family:var(--font-mono); color:var(--paper-dim); }
-.pill-est{ font-size:9px; color:var(--warn); border:1px solid var(--warn-dim); border-radius:8px; padding:1px 5px; }
-
-/* Salute */
+/* Tabelle dati (usata dallo storico mensile di Finanze) */
 .health-table{ width:100%; border-collapse:collapse; font-size:12px; }
 .health-table th{ text-align:right; color:var(--paper-faint); font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:.5px; padding-bottom:6px; }
 .health-table th:first-child, .health-table td:first-child{ text-align:left; }
 .health-table td{ text-align:right; padding:5px 0; border-top:1px solid var(--line-soft); font-family:var(--font-mono); }
-.avg-row{ display:flex; gap:16px; font-size:11.5px; color:var(--paper-dim); margin-bottom:4px; }
-.avg-row b{ font-family:var(--font-mono); color:var(--paper); }
 
 /* Obiettivi */
 .goal-group{ display:flex; flex-direction:column; gap:6px; }

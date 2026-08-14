@@ -7,8 +7,6 @@ const ETICHETTE_DESTINAZIONE = {
   task: "task",
   persone: "persone",
   finanze: "finanze",
-  nutrizione: "nutrizione",
-  salute: "salute",
   obiettivi: "obiettivi",
   memoria: "memoria",
 };

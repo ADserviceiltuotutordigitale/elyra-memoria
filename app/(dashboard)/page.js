@@ -3,8 +3,6 @@ import DashboardGrid from "@/components/DashboardGrid";
 import Clock from "@/components/Clock";
 import CalendarioCard from "@/components/CalendarioCard";
 import AbitudiniCard from "@/components/AbitudiniCard";
-import NutrizioneCard from "@/components/NutrizioneCard";
-import SaluteCard from "@/components/SaluteCard";
 import ObiettiviCard from "@/components/ObiettiviCard";
 import PolsoFinanziarioCard from "@/components/PolsoFinanziarioCard";
 import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
@@ -29,9 +27,8 @@ function trentaGiorniPrima(dataISO) {
   return dt.toISOString().slice(0, 10);
 }
 
-// Dati d'esempio ancora per Calendario, Blocchi, Polso, Nutrizione,
-// Salute e Obiettivi — arrivano con A13.2 e successivi. Operator e
-// Session sono già collegati ai dati veri (A13.1).
+// Blocchi resta con dati d'esempio: è una ricombinazione del CRM,
+// rimandata alla Parte 9 per scelta della guida.
 export default async function HomeScreen() {
   const oggi = oggiISO();
 
@@ -152,10 +149,6 @@ export default async function HomeScreen() {
       </section>
 
       <PolsoFinanziarioCard />
-
-      <NutrizioneCard />
-
-      <SaluteCard />
 
       <ObiettiviCard />
     </DashboardGrid>
