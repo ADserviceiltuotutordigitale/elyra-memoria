@@ -1,18 +1,9 @@
-import { getProfilo, getLogGiornalieroRange } from "@/lib/store";
+import { getProfilo } from "@/lib/store";
 import { leggiUltimoPolso } from "@/lib/finanze";
-import { oggiISO, giorniFa } from "@/lib/date";
-import { calcolaStriscia } from "@/lib/streak";
 
 // Alimenta la striscia strumenti nella barra in alto (tutte le pagine).
 export async function GET() {
-  const oggi = oggiISO();
-  const [profilo, log, polso] = await Promise.all([
-    getProfilo(),
-    getLogGiornalieroRange(giorniFa(oggi, 30), oggi),
-    leggiUltimoPolso(),
-  ]);
-
-  const streak = calcolaStriscia(log, oggi);
+  const [profilo, polso] = await Promise.all([getProfilo(), leggiUltimoPolso()]);
 
   let deltaPercento = null;
   if (polso.istantanea && polso.delta !== null) {
@@ -21,7 +12,7 @@ export async function GET() {
   }
 
   return Response.json(
-    { streak, focus: profilo.focus_del_giorno || null, deltaPercento },
+    { focus: profilo.focus_del_giorno || null, deltaPercento },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

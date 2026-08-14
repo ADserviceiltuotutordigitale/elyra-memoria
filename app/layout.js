@@ -22,7 +22,7 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata = {
   title: "Elyra — memoria",
-  description: "Task, calendario, finanze, abitudini e una memoria che impara chi sei.",
+  description: "Task, calendario, finanze e una memoria che impara chi sei.",
 };
 
 export default function RootLayout({ children }) {

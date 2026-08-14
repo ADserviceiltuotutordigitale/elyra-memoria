@@ -2,14 +2,12 @@ import Link from "next/link";
 import DashboardGrid from "@/components/DashboardGrid";
 import Clock from "@/components/Clock";
 import CalendarioCard from "@/components/CalendarioCard";
-import AbitudiniCard from "@/components/AbitudiniCard";
 import ObiettiviCard from "@/components/ObiettiviCard";
 import PolsoFinanziarioCard from "@/components/PolsoFinanziarioCard";
-import { getProfilo, getTask, getLogGiornalieroRange } from "@/lib/store";
-import { oggiISO, formattaDataPerEsteso, saluto } from "@/lib/date";
-import { calcolaStriscia } from "@/lib/streak";
+import { getProfilo, getTask } from "@/lib/store";
+import { formattaDataPerEsteso, saluto } from "@/lib/date";
 
-// Legge dati veri a ogni richiesta (profilo, task, log). Senza questo,
+// Legge dati veri a ogni richiesta (profilo, task). Senza questo,
 // Next la prerenderizza come statica al momento della build e la Home
 // resterebbe congelata a quel momento — Parte 8, "Dopo un refresh vedi
 // il dato di prima".
@@ -20,25 +18,10 @@ const ORDINE_TEMPERATURA = { caldo: 0, tiepido: 1, freddo: 2 };
 const ETICHETTA_FASCIA = { in_ritardo: "In ritardo", oggi: "Oggi" };
 const CLASSE_FASCIA = { in_ritardo: "late", oggi: "today" };
 
-function trentaGiorniPrima(dataISO) {
-  const [y, m, d] = dataISO.split("-").map(Number);
-  const dt = new Date(Date.UTC(y, m - 1, d));
-  dt.setUTCDate(dt.getUTCDate() - 30);
-  return dt.toISOString().slice(0, 10);
-}
-
 // Blocchi resta con dati d'esempio: è una ricombinazione del CRM,
 // rimandata alla Parte 9 per scelta della guida.
 export default async function HomeScreen() {
-  const oggi = oggiISO();
-
-  const [profilo, taskAperti, logUltimiTrenta] = await Promise.all([
-    getProfilo(),
-    getTask(),
-    getLogGiornalieroRange(trentaGiorniPrima(oggi), oggi),
-  ]);
-
-  const striscia = calcolaStriscia(logUltimiTrenta, oggi);
+  const [profilo, taskAperti] = await Promise.all([getProfilo(), getTask()]);
 
   const treTaskDiOggi = taskAperti
     .filter((t) => t.fascia === "in_ritardo" || t.fascia === "oggi")
@@ -75,9 +58,6 @@ export default async function HomeScreen() {
               {profilo.focus_del_giorno}
             </div>
           )}
-          <div className="streak">
-            <b className="num">{striscia}</b> giorni di fila
-          </div>
         </div>
       </section>
 
@@ -124,8 +104,6 @@ export default async function HomeScreen() {
       </section>
 
       <CalendarioCard />
-
-      <AbitudiniCard />
 
       <section className="card" id="card-blocchi">
         <div className="card-plate">

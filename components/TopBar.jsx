@@ -41,13 +41,6 @@ export default function TopBar() {
         </nav>
         <div className="ledger" aria-label="strumenti rapidi">
           <div className="gauge">
-            <span className="g-label">Streak</span>
-            <span className="g-value num up">
-              {riepilogo ? riepilogo.streak : "—"}
-              <small>gg</small>
-            </span>
-          </div>
-          <div className="gauge">
             <span className="g-label">Focus</span>
             <span className="g-value" style={{ fontSize: 12 }}>
               {riepilogo?.focus || "—"}
