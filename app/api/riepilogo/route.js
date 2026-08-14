@@ -6,9 +6,11 @@ export async function GET() {
   const [profilo, polso] = await Promise.all([getProfilo(), leggiUltimoPolso()]);
 
   let deltaPercento = null;
-  if (polso.istantanea && polso.delta !== null) {
-    const precedente = polso.istantanea.patrimonio_netto - polso.delta;
-    if (precedente !== 0) deltaPercento = (polso.delta / precedente) * 100;
+  if (polso.istantanea && polso.deltaPersonale !== null && polso.deltaLavoro !== null) {
+    const totaleAttuale = polso.istantanea.totale_personale + polso.istantanea.totale_lavoro;
+    const deltaTotale = polso.deltaPersonale + polso.deltaLavoro;
+    const precedente = totaleAttuale - deltaTotale;
+    if (precedente !== 0) deltaPercento = (deltaTotale / Math.abs(precedente)) * 100;
   }
 
   return Response.json(

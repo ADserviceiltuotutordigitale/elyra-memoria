@@ -275,8 +275,18 @@ button{font-family:inherit;cursor:pointer;}
 .pulse-total .delta.up{ color:var(--good); }
 .pulse-total .delta.down{ color:var(--bad); }
 .pulse-bars{ display:flex; flex-direction:column; gap:8px; }
+.pulse-doppio{ display:flex; gap:16px; }
+.pulse-blocco{ flex:1; }
+.pulse-blocco .pulse-ambito{
+  font-size:9.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--paper-faint); margin-bottom:2px;
+}
 .pbar-row{ display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--paper-dim); }
 .pbar-row .pbar-label{ width:70px; flex:none; }
+.pbar-row .pbar-label.pbar-label-conto{
+  width:auto; flex:1; min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
 .pbar-track{ flex:1; height:6px; background:var(--ink-800); border-radius:4px; overflow:hidden; }
 .pbar-fill{ height:100%; border-radius:4px; background:var(--brass); }
 .pbar-fill.debt{ background:var(--bad-dim); }
