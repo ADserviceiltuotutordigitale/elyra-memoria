@@ -1,46 +1,47 @@
 /* ============================================================
    TOKENS
-   Direzione: "quadro strumenti" — una plancia di comando serale,
-   non una SaaS bianca. Legno scuro, ottone, cifre allineate come
-   su un contatore. Ogni scheda è una targhetta con un nome.
+   Direzione: la palette e il template di ad-service.org — sfondo
+   chiaro, viola come accento di marca, Inter Tight per i titoli,
+   Roboto per il corpo. Ogni scheda resta una targhetta con un
+   nome, ma la plancia serale ha lasciato il posto a un tavolo
+   luminoso.
 
-   Preso dal mockup (design/mockup.html) così com'è — A4.
    Le tre righe --font-display/--font-body/--font-mono NON sono
    ridichiarate qui: arrivano dalla classe che next/font/google
-   applica su <html> in app/layout.js (A3). Ridichiararle in
-   :root le farebbe vincere sulla cascata e romperebbe i font veri.
+   applica su <html> in app/layout.js. Ridichiararle in :root le
+   farebbe vincere sulla cascata e romperebbe i font veri.
    ============================================================ */
 :root{
-  /* ink — sfondo, non nero puro: un blu-carbone caldo */
-  --ink-950:#12151b;
-  --ink-900:#1a1f27;
-  --ink-850:#20262f;
-  --ink-800:#262d38;
-  --line:#333c49;
-  --line-soft:#2a323d;
+  /* superfici — bianco, con toni lavanda chiarissimi per la profondità */
+  --ink-950:#ffffff;
+  --ink-900:#faf9fc;
+  --ink-850:#f2f0f6;
+  --ink-800:#eae6f1;
+  --line:#ddd8e6;
+  --line-soft:#e8e4ef;
 
-  /* paper — testo, tono carta/avorio, mai bianco puro */
-  --paper:#eae6da;
-  --paper-dim:#a7aebb;
-  --paper-faint:#6e7686;
+  /* testo — quasi nero, mai nero puro */
+  --paper:#212529;
+  --paper-dim:#5b5f66;
+  --paper-faint:#8a8d93;
 
-  /* ottone — accento di marca, unico e con moderazione */
-  --brass:#c9a15a;
-  --brass-bright:#e0bd7c;
-  --brass-dim:#8a7141;
+  /* viola — accento di marca AD Service, unico e con moderazione */
+  --brass:#a01dbf;
+  --brass-bright:#d346f6;
+  --brass-dim:#c17adb;
 
-  /* semantica — non l'ottone, tre voci a parte */
-  --good:#7fae6f;
-  --good-dim:#4d6b46;
-  --bad:#c4636b;
-  --bad-dim:#7a3f44;
-  --warn:#d99a4e;
-  --warn-dim:#8a6535;
+  /* semantica — non il viola, tre voci a parte */
+  --good:#1f8a4c;
+  --good-dim:#e1f5e7;
+  --bad:#d1293f;
+  --bad-dim:#fbdee3;
+  --warn:#b5651d;
+  --warn-dim:#fcebd8;
 
   --radius:10px;
   --radius-sm:6px;
   --gap:18px;
-  --shadow-panel:0 1px 0 rgba(0,0,0,.4), 0 12px 28px -16px rgba(0,0,0,.6);
+  --shadow-panel:0 1px 0 rgba(20,10,30,.04), 0 12px 28px -16px rgba(20,10,30,.12);
 }
 
 *{box-sizing:border-box;}
@@ -48,7 +49,7 @@ html,body{margin:0;padding:0;}
 html{ height:100%; }
 body{
   background:
-    radial-gradient(1200px 600px at 15% -10%, rgba(201,161,90,.07), transparent 60%),
+    radial-gradient(1200px 600px at 15% -10%, rgba(160,29,191,.04), transparent 60%),
     var(--ink-950);
   color:var(--paper);
   font-family:var(--font-body);
@@ -61,7 +62,7 @@ body{
   overflow-x:hidden;
 }
 
-::selection{background:var(--brass-dim);color:var(--paper);}
+::selection{background:var(--brass-dim);color:#ffffff;}
 
 a{color:inherit;text-decoration:none;}
 
@@ -195,7 +196,7 @@ button{font-family:inherit;cursor:pointer;}
   padding:12px 16px;
   border-bottom:1px solid var(--line-soft);
   background:
-    linear-gradient(180deg, rgba(201,161,90,.05), transparent);
+    linear-gradient(180deg, rgba(160,29,191,.05), transparent);
 }
 .card-plate .plate-name{
   font-size:10.5px; font-weight:700; letter-spacing:1.6px;
@@ -235,8 +236,8 @@ button{font-family:inherit;cursor:pointer;}
   font-size:9.5px; font-weight:700; letter-spacing:.6px; text-transform:uppercase;
   padding:2px 6px; border-radius:4px;
 }
-.band.late{ background:var(--bad-dim); color:#ffd9dc; }
-.band.today{ background:var(--warn-dim); color:#ffe6c2; }
+.band.late{ background:var(--bad-dim); color:#8a1c30; }
+.band.today{ background:var(--warn-dim); color:#7a4310; }
 
 /* Calendario */
 .week-strip{ display:flex; gap:6px; }
@@ -248,7 +249,7 @@ button{font-family:inherit;cursor:pointer;}
   background:none;
 }
 .week-day .d-num{ font-family:var(--font-mono); font-size:15px; color:var(--paper); display:block; margin-top:2px; }
-.week-day.is-today{ border-color:var(--brass); background:rgba(201,161,90,.08); }
+.week-day.is-today{ border-color:var(--brass); background:rgba(160,29,191,.08); }
 .week-day.is-today .d-num{ color:var(--brass-bright); }
 .agenda{ display:flex; flex-direction:column; gap:7px; }
 .agenda-item{ display:flex; gap:10px; font-size:12.5px; }
@@ -360,12 +361,12 @@ button{font-family:inherit;cursor:pointer;}
 .person-items{ display:flex; flex-direction:column; gap:6px; }
 
 /* Pannello laterale */
-.crm-panel-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:60; }
+.crm-panel-overlay{ position:fixed; inset:0; background:rgba(20,10,30,.35); z-index:60; }
 .crm-panel{
   position:fixed; top:0; right:0; bottom:0; width:400px; max-width:92vw;
   background:var(--ink-900); border-left:1px solid var(--line); z-index:61;
   display:flex; flex-direction:column;
-  box-shadow:-20px 0 60px -20px rgba(0,0,0,.7);
+  box-shadow:-20px 0 60px -20px rgba(20,10,30,.18);
 }
 .crm-panel-header{
   padding:14px 16px; border-bottom:1px solid var(--line-soft);
@@ -411,7 +412,7 @@ button{font-family:inherit;cursor:pointer;}
 .risposta-panel-inner{
   background:var(--ink-900); border:1px solid var(--brass-dim); border-radius:14px;
   padding:12px 16px 14px;
-  box-shadow:0 10px 40px -10px rgba(0,0,0,.7);
+  box-shadow:0 10px 40px -10px rgba(20,10,30,.15);
   display:flex; flex-direction:column; gap:8px;
   animation:risposta-in .18s ease-out;
 }
@@ -432,7 +433,7 @@ button{font-family:inherit;cursor:pointer;}
   border:1px solid var(--brass-dim);
   border-radius:14px;
   padding:8px 8px 8px 16px;
-  box-shadow:0 10px 40px -10px rgba(0,0,0,.7), 0 0 0 1px rgba(201,161,90,.05);
+  box-shadow:0 10px 40px -10px rgba(20,10,30,.15), 0 0 0 1px rgba(160,29,191,.06);
 }
 .capture-status{ font-size:9.5px; letter-spacing:1px; text-transform:uppercase; color:var(--paper-faint); white-space:nowrap; }
 .capture-inner input{
@@ -447,7 +448,7 @@ button{font-family:inherit;cursor:pointer;}
 }
 .mic-btn svg{ width:16px; height:16px; }
 .mic-btn.listening{ background:var(--brass); border-color:var(--brass); color:var(--ink-950); animation:pulse 1.4s ease-in-out infinite; }
-@keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(201,161,90,.45);} 50%{ box-shadow:0 0 0 9px rgba(201,161,90,0);} }
+@keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(160,29,191,.45);} 50%{ box-shadow:0 0 0 9px rgba(160,29,191,0);} }
 @media (prefers-reduced-motion: reduce){ .mic-btn.listening{ animation:none; } }
 
 /* Review */
