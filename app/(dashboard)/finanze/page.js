@@ -1,10 +1,10 @@
 import DashboardGrid from "@/components/DashboardGrid";
-import PolsoFinanziarioCard from "@/components/PolsoFinanziarioCard";
+import FinanzeDettaglio from "@/components/FinanzeDettaglio";
 
 export default function FinanzeScreen() {
   return (
     <DashboardGrid cols={2}>
-      <PolsoFinanziarioCard />
+      <FinanzeDettaglio />
     </DashboardGrid>
   );
 }
