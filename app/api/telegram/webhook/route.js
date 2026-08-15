@@ -1,7 +1,8 @@
 import { eseguiCattura } from "@/lib/capture";
 import { rispondiADomanda } from "@/lib/domande";
 import { eDomanda } from "@/lib/testo";
-import { updateTask } from "@/lib/store";
+import { rilevaAzioneSuTask } from "@/lib/azioni";
+import { updateTask, completeTask, deleteTask } from "@/lib/store";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
 
@@ -84,6 +85,22 @@ async function gestisciMessaggio(message) {
     } catch {
       await inviaMessaggio(chatId, "Non sono riuscita a rispondere — riprova.");
     }
+    return;
+  }
+
+  // Prima di archiviare come nota nuova, controlla se è un comando su un
+  // task esistente ("rimuovi X", "completa X") — Parte 6-bis. Se il
+  // modello non trova un id sicuro, azione resta null e il testo prosegue
+  // come cattura normale, invariato rispetto a prima.
+  const { azione, taskId, titolo: titoloTask } = await rilevaAzioneSuTask(testo);
+  if (azione === "elimina") {
+    await deleteTask(taskId);
+    await inviaMessaggio(chatId, `Rimosso: "${titoloTask}"`);
+    return;
+  }
+  if (azione === "completa") {
+    await completeTask(taskId);
+    await inviaMessaggio(chatId, `Completato: "${titoloTask}"`);
     return;
   }
 
