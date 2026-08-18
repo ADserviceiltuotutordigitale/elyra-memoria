@@ -9,6 +9,7 @@ const ETICHETTE_DESTINAZIONE = {
   finanze: "finanze",
   obiettivi: "obiettivi",
   memoria: "memoria",
+  calendario: "calendario",
 };
 
 export default function CaptureBar() {
