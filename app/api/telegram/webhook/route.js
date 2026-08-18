@@ -2,7 +2,9 @@ import { eseguiCattura } from "@/lib/capture";
 import { rispondiADomanda } from "@/lib/domande";
 import { eDomanda } from "@/lib/testo";
 import { rilevaAzioneSuTask, rilevaAzioneSuOpportunita } from "@/lib/azioni";
-import { updateTask, completeTask, deleteTask } from "@/lib/store";
+import { interpretaOrarioRisposta } from "@/lib/classify";
+import { creaEventoCalendario } from "@/lib/googleCalendar";
+import { updateTask, completeTask, deleteTask, getProfilo, updateProfilo } from "@/lib/store";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
 
@@ -76,6 +78,31 @@ async function gestisciMessaggio(message) {
   }
   if (!testo || !testo.trim()) return;
 
+  const DIECI_MINUTI_MS = 10 * 60 * 1000;
+  const profilo = await getProfilo();
+  const pendente = profilo.calendario_pendente;
+  if (pendente && Date.now() - new Date(pendente.chiestoAlle).getTime() < DIECI_MINUTI_MS) {
+    const { capito, ora } = await interpretaOrarioRisposta(testo);
+    if (capito) {
+      const oraStrutturata = ora
+        ? (() => {
+            const [ore, minuti] = ora.split(":").map(Number);
+            return { ore, minuti };
+          })()
+        : null;
+      await creaEventoCalendario({ titolo: pendente.titolo, data: pendente.data, ora: oraStrutturata });
+      await updateProfilo({ calendario_pendente: null });
+      await inviaMessaggio(
+        chatId,
+        `Fissato: "${pendente.titolo}" il ${pendente.data}${ora ? " alle " + ora : " (tutto il giorno)"}`
+      );
+      return;
+    }
+    // Non è una risposta sull'orario: prosegue normalmente. La richiesta
+    // pendente resta (scadrà da sola dopo 10 minuti) — l'utente potrebbe
+    // semplicemente aver cambiato discorso.
+  }
+
   // Stessa barra, doppio uso: se sembra una domanda risponde invece di
   // archiviare — stesso riconoscimento della dashboard (Parte 6, A17).
   if (eDomanda(testo)) {
@@ -117,8 +144,24 @@ async function gestisciMessaggio(message) {
   }
 
   const risultato = await eseguiCattura(testo, { provenienza: "telegram" });
-  const tastiera = risultato.task ? tastieraUrgenza(risultato.task.id) : undefined;
 
+  if (risultato.richiestaOrario) {
+    await updateProfilo({
+      calendario_pendente: { titolo: risultato.titolo, data: risultato.data, chiestoAlle: new Date().toISOString() },
+    });
+    await inviaMessaggio(chatId, `A che ora il ${risultato.data}? (scrivi un orario, o "tutto il giorno")`);
+    return;
+  }
+
+  if (risultato.destinazione === "calendario") {
+    await inviaMessaggio(
+      chatId,
+      `Fissato: "${risultato.titolo}" il ${risultato.data}${risultato.ora ? " alle " + risultato.ora : " (tutto il giorno)"}`
+    );
+    return;
+  }
+
+  const tastiera = risultato.task ? tastieraUrgenza(risultato.task.id) : undefined;
   await inviaMessaggio(chatId, `Archiviato in ${risultato.destinazione}: "${risultato.titolo}"`, tastiera);
 }
 
