@@ -1,10 +1,10 @@
 import DashboardGrid from "@/components/DashboardGrid";
-import CrmBoard from "@/components/CrmBoard";
+import CrmOdooBoard from "@/components/CrmOdooBoard";
 
 export default function CrmScreen() {
   return (
     <DashboardGrid cols={1}>
-      <CrmBoard />
+      <CrmOdooBoard />
     </DashboardGrid>
   );
 }
