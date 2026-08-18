@@ -28,14 +28,21 @@ export default function CrmOdooBoard() {
   const [salvando, setSalvando] = useState(false);
   const [query, setQuery] = useState("");
   const [dragId, setDragId] = useState(null);
+  const [errore, setErrore] = useState(null);
 
   const carica = useCallback(() => {
     return fetch("/api/crm/pipeline")
-      .then((res) => res.json())
-      .then((body) => {
+      .then((res) => res.json().then((body) => ({ ok: res.ok, body })))
+      .then(({ ok, body }) => {
+        if (!ok) {
+          setErrore(body.error || "impossibile leggere la pipeline da Odoo");
+          return;
+        }
+        setErrore(null);
         setStages(body.stages || []);
         setOpportunita(body.opportunita || []);
-      });
+      })
+      .catch(() => setErrore("impossibile leggere la pipeline da Odoo"));
   }, []);
 
   useEffect(() => {
@@ -224,6 +231,7 @@ export default function CrmOdooBoard() {
               )}
             </div>
           )}
+          {errore && <div style={{ color: "var(--bad)", fontSize: 11.5 }}>{errore}</div>}
         </div>
       </section>
 
