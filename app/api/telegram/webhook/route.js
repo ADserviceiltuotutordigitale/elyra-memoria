@@ -1,7 +1,7 @@
 import { eseguiCattura } from "@/lib/capture";
 import { rispondiADomanda } from "@/lib/domande";
 import { eDomanda } from "@/lib/testo";
-import { rilevaAzioneSuTask } from "@/lib/azioni";
+import { rilevaAzioneSuTask, rilevaAzioneSuOpportunita } from "@/lib/azioni";
 import { updateTask, completeTask, deleteTask } from "@/lib/store";
 
 const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}`;
@@ -101,6 +101,18 @@ async function gestisciMessaggio(message) {
   if (azione === "completa") {
     await completeTask(taskId);
     await inviaMessaggio(chatId, `Completato: "${titoloTask}"`);
+    return;
+  }
+
+  // Stesso principio, ma per le opportunità della pipeline CRM Odoo:
+  // "sposta X alla fase Y" / "segna vinta X" spostano un'opportunità
+  // esistente invece di archiviare una nota nuova. Qui il segnale
+  // trovato/non-trovato è opportunitaId !== null (nessun campo "azione").
+  const { opportunitaId, stageId, titolo: titoloOpp, faseNome } = await rilevaAzioneSuOpportunita(testo);
+  if (opportunitaId !== null) {
+    const { spostaFaseOpportunita } = await import("@/lib/odoo");
+    await spostaFaseOpportunita(opportunitaId, stageId);
+    await inviaMessaggio(chatId, `Spostata: "${titoloOpp}" → ${faseNome}`);
     return;
   }
 
