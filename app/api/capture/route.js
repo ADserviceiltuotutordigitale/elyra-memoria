@@ -1,5 +1,7 @@
 import { eseguiCattura } from "@/lib/capture";
 
+export const maxDuration = 60;
+
 export async function POST(request) {
   const { testo, provenienza = "dashboard" } = await request.json().catch(() => ({}));
   if (!testo || !testo.trim()) {
