@@ -10,6 +10,8 @@ export default function LoginPage() {
   const [codice, setCodice] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetInviato, setResetInviato] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,6 +35,17 @@ export default function LoginPage() {
       setError("Qualcosa è andato storto. Riprova.");
       setLoading(false);
     }
+  }
+
+  async function handleReset() {
+    setResetLoading(true);
+    try {
+      await fetch("/api/auth/richiedi-reset", { method: "POST" });
+    } catch {
+      // ignora: mostriamo comunque "Controlla Telegram" per non rivelare stato
+    }
+    setResetLoading(false);
+    setResetInviato(true);
   }
 
   const campoStile = {
@@ -77,6 +90,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
+              autoComplete="username"
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -90,6 +104,7 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ ...campoStile, width: "100%", marginTop: 4 }}
@@ -97,12 +112,13 @@ export default function LoginPage() {
           </div>
           <div>
             <label htmlFor="codice" style={{ fontSize: 12.5, color: "var(--paper-dim)" }}>
-              Codice (se hai attivato il 2FA)
+              Codice 2FA
             </label>
             <input
               id="codice"
               type="text"
               inputMode="numeric"
+              autoComplete="one-time-code"
               value={codice}
               onChange={(e) => setCodice(e.target.value)}
               style={{ ...campoStile, width: "100%", marginTop: 4 }}
@@ -124,6 +140,28 @@ export default function LoginPage() {
           >
             {loading ? "Verifica…" : "Entra"}
           </button>
+          {resetInviato ? (
+            <div style={{ fontSize: 12.5, color: "var(--paper-dim)", textAlign: "center" }}>
+              Controlla Telegram.
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={resetLoading}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--paper-dim)",
+                fontSize: 12.5,
+                textDecoration: "underline",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              Password dimenticata?
+            </button>
+          )}
         </div>
       </form>
     </main>
