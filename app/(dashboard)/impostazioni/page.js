@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import SicurezzaTotp from "@/components/SicurezzaTotp";
 
 export default function ImpostazioniScreen() {
   const router = useRouter();
@@ -46,6 +47,8 @@ export default function ImpostazioniScreen() {
                 Esci
               </button>
             </div>
+            <hr className="rule" />
+            <SicurezzaTotp />
           </div>
         </section>
       </div>
