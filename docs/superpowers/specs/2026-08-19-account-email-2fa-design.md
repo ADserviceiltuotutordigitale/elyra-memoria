@@ -117,17 +117,25 @@ in anticipo se il 2FA è già configurato.
 
 Nuova sezione "Sicurezza" nella pagina impostazioni esistente (stesso
 pattern a blocchi separati da `<hr className="rule" />` già usato per
-Backup/Sessione). Due rotte nuove:
+Backup/Sessione). Due rotte nuove.
 
-- `POST /api/auth/totp/inizia` → genera un segreto nuovo con
+> **Nota (corretta durante l'implementazione, Task 4):** le rotte sono
+> sotto `/api/account/totp/*`, non `/api/auth/totp/*` come originariamente
+> scritto qui. `proxy.js` esenta l'intero prefisso `/api/auth/` come
+> pubblico (per permettere il login stesso), quindi qualunque rotta
+> creata sotto `/api/auth/` sarebbe stata raggiungibile senza sessione —
+> incluso disabilitare il 2FA di qualcun altro. Spostato prima che
+> qualunque verifica reale col telefono procedesse.
+
+- `POST /api/account/totp/inizia` → genera un segreto nuovo con
   `generaSegreto()`, lo salva in `account_auth.totp_secret` (ma
   `totp_abilitato` resta `false` finché non è confermato), ritorna
   `{ segreto, qrDataUri }` (via `generaOtpauthUri` + `QRCode.toDataURL`).
-- `POST /api/auth/totp/conferma` con `{ codice }` → verifica il codice
+- `POST /api/account/totp/conferma` con `{ codice }` → verifica il codice
   contro il segreto appena salvato; se corretto, imposta
   `totp_abilitato = true`; se sbagliato, non cambia nulla (l'utente può
   riprovare o rigenerare da capo con `/inizia`).
-- `POST /api/auth/totp/disabilita` con `{ password }` → richiede la
+- `POST /api/account/totp/disabilita` con `{ password }` → richiede la
   password corrente per conferma, poi azzera `totp_secret` e
   `totp_abilitato` (per il caso "ho perso il telefono").
 

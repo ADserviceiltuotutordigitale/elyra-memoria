@@ -540,17 +540,17 @@ git commit -m "Account email+password: tabella account_auth, nuovo login"
 ### Task 4: Configurazione del 2FA da `/impostazioni`
 
 **Files:**
-- Create: `app/api/auth/totp/route.js` (stato)
-- Create: `app/api/auth/totp/inizia/route.js`
-- Create: `app/api/auth/totp/conferma/route.js`
-- Create: `app/api/auth/totp/disabilita/route.js`
+- Create: `app/api/account/totp/route.js` (stato)
+- Create: `app/api/account/totp/inizia/route.js`
+- Create: `app/api/account/totp/conferma/route.js`
+- Create: `app/api/account/totp/disabilita/route.js`
 - Create: `components/SicurezzaTotp.jsx`
 - Modify: `app/(dashboard)/impostazioni/page.js`
 
 **Interfaces:**
 - Consumes: `getAccountAuth`/`updateAccountAuth` da `lib/store.js` (Task 3); `generaSegreto`/`generaOtpauthUri`/`verificaCodice` da `lib/totp.js` (Task 2); `verifyPassword` da `lib/password.js` (Task 1)
 
-- [ ] **Step 1: `app/api/auth/totp/route.js` (stato attuale)**
+- [ ] **Step 1: `app/api/account/totp/route.js` (stato attuale)**
 
 ```js
 import { getAccountAuth } from "@/lib/store";
@@ -561,7 +561,7 @@ export async function GET() {
 }
 ```
 
-- [ ] **Step 2: `app/api/auth/totp/inizia/route.js`**
+- [ ] **Step 2: `app/api/account/totp/inizia/route.js`**
 
 ```js
 import QRCode from "qrcode";
@@ -581,7 +581,7 @@ export async function POST() {
 }
 ```
 
-- [ ] **Step 3: `app/api/auth/totp/conferma/route.js`**
+- [ ] **Step 3: `app/api/account/totp/conferma/route.js`**
 
 ```js
 import { getAccountAuth, updateAccountAuth } from "@/lib/store";
@@ -601,7 +601,7 @@ export async function POST(request) {
 }
 ```
 
-- [ ] **Step 4: `app/api/auth/totp/disabilita/route.js`**
+- [ ] **Step 4: `app/api/account/totp/disabilita/route.js`**
 
 ```js
 import { getAccountAuth, updateAccountAuth } from "@/lib/store";
@@ -634,7 +634,7 @@ export default function SicurezzaTotp() {
   const [messaggio, setMessaggio] = useState("");
 
   useEffect(() => {
-    fetch("/api/auth/totp")
+    fetch("/api/account/totp")
       .then((res) => res.json())
       .then((body) => setAbilitato(body.totpAbilitato));
   }, []);
@@ -642,7 +642,7 @@ export default function SicurezzaTotp() {
   async function iniziaConfigurazione() {
     setErrore("");
     setMessaggio("");
-    const res = await fetch("/api/auth/totp/inizia", { method: "POST" });
+    const res = await fetch("/api/account/totp/inizia", { method: "POST" });
     const body = await res.json();
     if (!res.ok) {
       setErrore(body.error || "Errore, riprova.");
@@ -654,7 +654,7 @@ export default function SicurezzaTotp() {
   async function confermaConfigurazione(e) {
     e.preventDefault();
     setErrore("");
-    const res = await fetch("/api/auth/totp/conferma", {
+    const res = await fetch("/api/account/totp/conferma", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ codice }),
@@ -673,7 +673,7 @@ export default function SicurezzaTotp() {
   async function disabilita(e) {
     e.preventDefault();
     setErrore("");
-    const res = await fetch("/api/auth/totp/disabilita", {
+    const res = await fetch("/api/account/totp/disabilita", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: passwordDisabilita }),
@@ -797,7 +797,7 @@ Expected: la conferma riesce, `totp_abilitato` diventa `true` su Supabase. Poi e
 
 ```bash
 cd "C:/000_Cowork_Claude/Elyra_Memoria"
-git add "app/api/auth/totp" components/SicurezzaTotp.jsx "app/(dashboard)/impostazioni/page.js"
+git add "app/api/account/totp" components/SicurezzaTotp.jsx "app/(dashboard)/impostazioni/page.js"
 git commit -m "Configurazione 2FA da /impostazioni: QR, conferma, disattivazione"
 ```
 
