@@ -10,6 +10,6 @@ export async function POST(request) {
   if (!verificaCodice(account.totp_secret, codice ?? "")) {
     return Response.json({ ok: false, error: "Codice non valido." }, { status: 401 });
   }
-  await updateAccountAuth({ totp_abilitato: true });
+  await updateAccountAuth({ totp_secret: account.totp_secret, totp_abilitato: true });
   return Response.json({ ok: true });
 }

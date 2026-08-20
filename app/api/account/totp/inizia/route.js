@@ -7,6 +7,9 @@ export async function POST() {
   if (!account) {
     return Response.json({ error: "Nessun account configurato." }, { status: 400 });
   }
+  if (account.totp_abilitato) {
+    return Response.json({ error: "Disabilita prima il 2FA attuale." }, { status: 400 });
+  }
   const segreto = generaSegreto();
   await updateAccountAuth({ totp_secret: segreto, totp_abilitato: false });
   const uri = generaOtpauthUri(segreto, account.email);
