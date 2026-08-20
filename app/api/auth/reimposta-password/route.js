@@ -21,7 +21,7 @@ export async function POST(request) {
   }
 
   const scaduto = new Date(account.reset_token_scade).getTime() < Date.now();
-  const tokenValido = constantTimeEqual(hashToken(token), account.reset_token_hash);
+  const tokenValido = constantTimeEqual(hashToken(String(token ?? "")), account.reset_token_hash);
 
   if (scaduto || !tokenValido) {
     return Response.json(

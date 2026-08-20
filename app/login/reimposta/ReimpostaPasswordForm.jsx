@@ -102,7 +102,9 @@ export default function ReimpostaPasswordForm() {
             </label>
             <input
               id="password"
+              name="password"
               type="password"
+              autoComplete="new-password"
               autoFocus
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -115,7 +117,9 @@ export default function ReimpostaPasswordForm() {
             </label>
             <input
               id="conferma"
+              name="confirm-password"
               type="password"
+              autoComplete="new-password"
               value={conferma}
               onChange={(e) => setConferma(e.target.value)}
               style={{ ...campoStile, width: "100%", marginTop: 4 }}

@@ -90,6 +90,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
+              autoComplete="username"
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -103,6 +104,7 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ ...campoStile, width: "100%", marginTop: 4 }}
@@ -116,6 +118,7 @@ export default function LoginPage() {
               id="codice"
               type="text"
               inputMode="numeric"
+              autoComplete="one-time-code"
               value={codice}
               onChange={(e) => setCodice(e.target.value)}
               style={{ ...campoStile, width: "100%", marginTop: 4 }}

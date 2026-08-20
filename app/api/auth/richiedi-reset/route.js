@@ -18,6 +18,13 @@ export async function POST(request) {
     }
   }
 
+  if (account.reset_token_scade) {
+    const scadenzaEsistente = new Date(account.reset_token_scade).getTime();
+    if (scadenzaEsistente > ora) {
+      return Response.json({ ok: true });
+    }
+  }
+
   const token = generaTokenReset();
 
   await updateAccountAuth({
@@ -26,7 +33,7 @@ export async function POST(request) {
     reset_richiesto_il: new Date(ora).toISOString(),
   });
 
-  const origin = new URL(request.url).origin;
+  const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
   const link = `${origin}/login/reimposta?token=${token}`;
 
   try {
